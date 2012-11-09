@@ -1,5 +1,5 @@
-plugin_listandedit
-==================
+# plugin_listandedit
+
 Copyright Ian W. Scott, 2012 (scottianw@gmail.com)
 Licensed as free software under the GPL 3.0 license.
 
