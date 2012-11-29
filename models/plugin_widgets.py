@@ -31,7 +31,7 @@ def TOOLTIP(title, text, content, icon=None):
 
     return tip_wrapper
 
-def ROLE(content, role):
+def ROLE(content, role=None):
     '''
     Wrap some web2py helpers or html content in a condition so that it is only
     returned if the current user is logged in.
@@ -41,3 +41,5 @@ def ROLE(content, role):
 
     if auth.has_membership(role):
         return content
+    else:
+        return u'\u200b'
