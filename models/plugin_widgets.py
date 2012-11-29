@@ -30,3 +30,14 @@ def TOOLTIP(title, text, content, icon=None):
     tip_wrapper.append(DIV(content, _class=tip_classes, _id=title))
 
     return tip_wrapper
+
+def ROLE(content, role):
+    '''
+    Wrap some web2py helpers or html content in a condition so that it is only
+    returned if the current user is logged in.
+    '''
+    if role is None:
+        role = 'administrators'
+
+    if auth.has_membership(role):
+        return content
