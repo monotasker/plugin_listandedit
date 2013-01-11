@@ -1,3 +1,5 @@
+response.files.append(URL('static',
+            'plugin_widgets/image_picker.js'))
 
 def ICONLINK(title, text, icon):
     linktitle = '{}_icon'.format(title)
@@ -43,3 +45,5 @@ def ROLE(content, role=None):
         return content
     else:
         return u'\u200b'
+
+
