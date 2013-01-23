@@ -1,3 +1,5 @@
+import re
+
 response.files.append(URL('static',
             'plugin_widgets/image_picker.js'))
 
@@ -10,11 +12,12 @@ def ICONLINK(title, text, icon):
                 _id=linktitle)
     return link
 
-def TOOLTIP(title, text, content, icon=None):
+def TOOLTIP(title, text, content, direction='top', icon=None):
     '''
     Build and return a tooltip widget with the supplied content.
     '''
     # build widget wrapper
+    title = re.sub(' "', '-', title)
     wrapper_title = '{}_wrapper'.format(title)
     wrapper_classes = '{} tip_wrapper'.format(wrapper_title)
     tip_wrapper = DIV(_class=wrapper_classes, _id=wrapper_title)
@@ -25,10 +28,10 @@ def TOOLTIP(title, text, content, icon=None):
     else:
         trigger_title = '{}_trigger'.format(title)
         trigger_classes = '{} trigger'.format(trigger_title)
-        tip_wrapper.append(A(text, _classes=trigger_classes, _id=trigger_title))
+        tip_wrapper.append(A(text, _classes=trigger_classes, _id=trigger_title, _href='#{}'.format(title)))
 
     # add tip content
-    tip_classes = '{} tip'.format(title)
+    tip_classes = '{} tooltip-{}'.format(title, direction)
     tip_wrapper.append(DIV(content, _class=tip_classes, _id=title))
 
     return tip_wrapper
