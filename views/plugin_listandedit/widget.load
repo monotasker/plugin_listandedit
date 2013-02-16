@@ -1,7 +1,7 @@
 <div class="list_control">
     <h2>
-        <span class='table'>{{=request.args[0].capitalize()}}</span> on
-        <span class='restrictor'>{{=rname}}</span>
+        <span class='table'>{{=request.args[0].capitalize()}}</span> 
+        <span class='restrictor'>on {{=rname}}</span>
     </h2>
     {{=SPAN(str(len(listset)) + ' in total', _class='list_count')}}{{=adder}}
 </div>
