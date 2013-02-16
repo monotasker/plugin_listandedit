@@ -6,4 +6,8 @@
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
 ICONLINK	plugin_widgets.py	/^def ICONLINK(title, text, icon):$/;"	f
 ROLE	plugin_widgets.py	/^def ROLE(content, role=None):$/;"	f
+<<<<<<< HEAD
 TOOLTIP	plugin_widgets.py	/^def TOOLTIP(title, text, content, icon=None):$/;"	f
+=======
+TOOLTIP	plugin_widgets.py	/^def TOOLTIP(title, text, content, direction='top', icon=None):$/;"	f
+>>>>>>> 498674a46ba399c92db63bbed6b82ac14690be32
