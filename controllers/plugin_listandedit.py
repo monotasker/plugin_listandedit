@@ -52,7 +52,6 @@ def list():
         restrictor = ast.literal_eval(restr)
     else:
         restrictor = None
-    session.restrictor = restrictor
 
     #check to make sure the required argument names a table in the db
     if not tablename in db.tables():
@@ -85,10 +84,15 @@ def list():
         else:
             listformat = r[fieldname]
 
+        vardict = {'tablename': tablename}
+        if not vardict is None:
+            vardict['restrictor'] = restrictor
+
         i = A(listformat, _href=URL('plugin_listandedit', 'edit.load',
-                                        args=[tablename, r.id]),
-                                        _class='plugin_listandedit_list',
-                                        cid='viewpane')
+                                        args=[tablename, r.id],
+                                        vars=vardict),
+                                    _class='plugin_listandedit_list',
+                                    cid='viewpane')
         listset.append(i)
 
     return dict(listset=listset)
@@ -137,7 +141,6 @@ def widget():
         restrictor = ast.literal_eval(restr)
     else:
         restrictor = None
-    session.restrictor = restrictor
     if debug: print 'restrictor:', restrictor
 
     #check to make sure the required argument names a table in the db
@@ -171,27 +174,31 @@ def widget():
         else:
             listformat = r[fieldname]
 
+        vardict = {'tablename': tablename}
+        if not vardict is None:
+            vardict['restrictor'] = restrictor
+
         i = A(listformat, _href=URL('plugin_listandedit', 'edit.load',
-                                        args=[tablename, r.id]),
-                                        _class='plugin_listandedit_list',
-                                        cid='viewpane')
+                                        args=[tablename, r.id],
+                                        vars=vardict),
+                                    _class='plugin_listandedit_list',
+                                    cid='viewpane')
         listset.append(i)
 
     # create a link for adding a new row to the table
     adder = A('Add new', _href=URL('plugin_listandedit', 'edit.load',
-                                        args=[tablename]),
-                                        _class='plugin_listandedit_list',
-                                        cid='viewpane')
+                                    args=[tablename],
+                                    vars=request.vars),
+            _class='plugin_listandedit_list',
+            cid='viewpane')
 
     return dict(listset=listset, adder=adder, rname=rname)
 
 
-def makeurl(tablename, orderby):
+def makeurl(tablename, orderby, restrictor):
     rdict = {'orderby': orderby}
-    if session.restrictor:
-        rdict2 = dict((k, v) for k, v in session.restrictor.iteritems())
-        rdict = dict(rdict.items() + rdict2.items())
-    # TODO: fix this reference to an external controller/view
+    if not restrictor is None:
+        rdict['restrictor'] = restrictor
     the_url = URL('plugin_listandedit', 'list.load',
                     args=[tablename], vars=rdict)
     return the_url
@@ -208,6 +215,7 @@ def dupAndEdit():
     tablename = request.args[0]
     rowid = request.args[1]
     orderby = request.vars['orderby'] or 'id'
+    restrictor = request.vars['restrictor'] or None
     formname = '%s/%s/dup' % (tablename, rowid)
 
     src = db(db[tablename].id == rowid).select().first()
@@ -229,7 +237,7 @@ def dupAndEdit():
             session[wrappername] = src[v]
 
     if form.process(formname=formname).accepted:
-        the_url = makeurl(tablename, orderby)
+        the_url = makeurl(tablename, orderby, restrictor)
         response.js = "web2py_component('%s', " \
                                     "'listpane');" % the_url
         response.flash = 'New record successfully created.'
@@ -259,6 +267,7 @@ def edit():
 
     tablename = request.args[0]
     orderby = request.vars['orderby'] or 'id'
+    restrictor = request.vars['restrictor'] or None
     duplink = ''
     if len(request.args) > 1:
         rowid = request.args[1]
@@ -271,7 +280,7 @@ def edit():
                 showid=True,
                 formstyle='ul')
         if form.process(formname=formname).accepted:
-            the_url = makeurl(tablename, orderby)
+            the_url = makeurl(tablename, orderby, restrictor)
             response.js = "web2py_component('%s', " \
                                     "'listpane');" % the_url
             response.flash = 'The changes were recorded successfully.'
@@ -289,7 +298,9 @@ def edit():
         # create a link for adding a new row to the table
         duplink = A('Make a copy of this record',
                     _href=URL('plugin_listandedit',
-                    'dupAndEdit.load', args=[tablename, rowid]),
+                                'dupAndEdit.load',
+                                args=[tablename, rowid],
+                                vars=request.vars),
                     _class='plugin_listandedit_duplicate', cid='viewpane')
 
     elif len(request.args) == 1:
@@ -299,7 +310,7 @@ def edit():
                         showid=True,
                         formstyle='ul')
         if form.process(formname=formname).accepted:
-            the_url = makeurl(tablename, orderby)
+            the_url = makeurl(tablename, orderby, restrictor)
             response.js = "web2py_component('%s', 'listpane');" % the_url
             response.flash = 'New record successfully created.'
             if debug: print "submitted form vars", form.vars

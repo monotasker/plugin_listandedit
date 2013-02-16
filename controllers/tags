@@ -8,7 +8,7 @@ db	plugin_listandedit.py	/^    db = current.db$/;"	v
 dupAndEdit	plugin_listandedit.py	/^def dupAndEdit():$/;"	f
 edit	plugin_listandedit.py	/^def edit():$/;"	f
 list	plugin_listandedit.py	/^def list():$/;"	f
-makeurl	plugin_listandedit.py	/^def makeurl(tablename, orderby):$/;"	f
+makeurl	plugin_listandedit.py	/^def makeurl(tablename, orderby, restrictor):$/;"	f
 request	plugin_listandedit.py	/^    request = current.request$/;"	v
 response	plugin_listandedit.py	/^    response = current.response$/;"	v
 session	plugin_listandedit.py	/^    session = current.session$/;"	v

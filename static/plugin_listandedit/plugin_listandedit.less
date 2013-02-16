@@ -1,6 +1,6 @@
 /* plugin_listandedit */
 
-@import "../plugin_framework/framework";
+@import "../../../plugin_framework/static/plugin_framework/framework";
 
 /**structure**/
 #listpane                          {width:35%;
@@ -35,6 +35,8 @@
         &:hover                    {background-color:#003366;
                                     -moz-transition:all 800ms ease-out;
                                     -webkit-transition:all 800ms ease-out;
+                                    -ms-transition:all 800ms ease-out;
+                                    -o-transition:all 800ms ease-out;
                                     transition:all 800ms ease-out;}
     form                           {
         table,
@@ -54,11 +56,19 @@
                                     opacity:0.7;
                                     margin-left:0;
                                     margin-right:0;
-                                    .transition();
+                                    -moz-transition:all 800ms ease-out;
+                                    -webkit-transition:all 800ms ease-out;
+                                    -ms-transition:all 800ms ease-out;
+                                    -o-transition:all 800ms ease-out;
+                                    transition:all 800ms ease-out;
                 &:hover            {opacity:1;
                                     bottom:0px;
-                                    .transition();}
-                                    }
+                                    -moz-transition:all 800ms ease-out;
+                                    -webkit-transition:all 800ms ease-out;
+                                    -ms-transition:all 800ms ease-out;
+                                    -o-transition:all 800ms ease-out;
+                                    transition:all 800ms ease-out;}
+                }
             }
         }
     }
@@ -114,7 +124,9 @@
                                     display:inline-block;
                                     height:@lineheight3;
                                     font-size:@typeheight2;
-                                    .text-shadow(0,0,3px, rgba(0,0,0,0.1));}
+                                    .text-shadow(0,0,3px, rgba(0,0,0,0.1));
+        .restrictor                {font-size:@typeheight;}
+        }
 
     a                              {float:right;
                                     color:@mist;

@@ -1,3 +1,4 @@
+@import url(http://fonts.googleapis.com/css?family=Petrona);
 /* plugin_listandedit */
 /* apply a natural box layout model to all elements */
 * {
@@ -64,7 +65,7 @@
 }
 .Latin,
 .English {
-  font-family: Palatino, 'Palatino Linotype', serif;
+  font-family: Petrona, Palatino, 'Palatino Linotype', serif;
 }
 /* layout dimensions */
 /* text dimensions */
@@ -255,8 +256,10 @@ select {
 }
 form label {
   line-height: 36px;
+  font-size: 16px;
   text-transform: uppercase;
   font-family: ubuntu, calibri, arial, sans-serif;
+  letter-spacing: 2px;
   font-size: 12.8px;
 }
 input[type=submit] {
@@ -357,6 +360,8 @@ div.error {
   clear: both;
   padding: 0;
 }
+/* clearfix class; see http://css-tricks.com/snippets/css/clear-fix/ */
+/* css lines */
 /* css triangles */
 /* css speech bubbles */
 /* tooltips */
@@ -365,8 +370,7 @@ div.error {
   position: relative;
   overflow: visible;
 }
-a:hover .tip,
-a:active .tip {
+.tip_wrapper:target div.tip {
   display: block;
   -webkit-transition: all 200ms ease-in-out;
   -moz-transition: all 200ms ease-in-out;
@@ -374,6 +378,7 @@ a:active .tip {
   -ms-transition: all 200ms ease-in-out;
   transition: all 200ms ease-in-out;
 }
+/* make tip div visible */
 /* border images */
 /* buttons */
 .button {
@@ -471,11 +476,6 @@ a:active .tip {
   line-height: 24px;
   padding: 0;
   text-align: center;
-  -moz-border-radius: 16px 16px 16px 16px;
-  -webkit-border-radius: 16px 16px 16px 16px;
-  -o-border-radius: 16px 16px 16px 16px;
-  -ms-border-radius: 16px 16px 16px 16px;
-  border-radius: 16px 16px 16px 16px;
   font-weight: bold;
   -moz-border-radius: 16px 16px 16px 16px;
   -webkit-border-radius: 16px 16px 16px 16px;
@@ -902,6 +902,8 @@ a:active .tip {
   background-color: #003366;
   -moz-transition: all 800ms ease-out;
   -webkit-transition: all 800ms ease-out;
+  -ms-transition: all 800ms ease-out;
+  -o-transition: all 800ms ease-out;
   transition: all 800ms ease-out;
 }
 #viewpane form table,
@@ -934,21 +936,21 @@ a:active .tip {
   opacity: 0.7;
   margin-left: 0;
   margin-right: 0;
-  -webkit-transition: all 200ms ease-in-out;
-  -moz-transition: all 200ms ease-in-out;
-  -o-transition: all 200ms ease-in-out;
-  -ms-transition: all 200ms ease-in-out;
-  transition: all 200ms ease-in-out;
+  -moz-transition: all 800ms ease-out;
+  -webkit-transition: all 800ms ease-out;
+  -ms-transition: all 800ms ease-out;
+  -o-transition: all 800ms ease-out;
+  transition: all 800ms ease-out;
 }
 #viewpane form table input[type=submit]:hover,
 #viewpane form li div input[type=submit]:hover {
   opacity: 1;
   bottom: 0px;
-  -webkit-transition: all 200ms ease-in-out;
-  -moz-transition: all 200ms ease-in-out;
-  -o-transition: all 200ms ease-in-out;
-  -ms-transition: all 200ms ease-in-out;
-  transition: all 200ms ease-in-out;
+  -moz-transition: all 800ms ease-out;
+  -webkit-transition: all 800ms ease-out;
+  -ms-transition: all 800ms ease-out;
+  -o-transition: all 800ms ease-out;
+  transition: all 800ms ease-out;
 }
 /**base theme - depends on mixins and vars from plugin_framework**/
 #listpane {
@@ -1028,6 +1030,9 @@ a:active .tip {
   -o-text-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
   -ms-text-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
   text-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+}
+#page .list_control h2 .restrictor {
+  font-size: 16px;
 }
 #page .list_control a {
   float: right;
