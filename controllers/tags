@@ -1,0 +1,15 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+db	plugin_listandedit.py	/^    db = current.db$/;"	v
+dupAndEdit	plugin_listandedit.py	/^def dupAndEdit():$/;"	f
+edit	plugin_listandedit.py	/^def edit():$/;"	f
+list	plugin_listandedit.py	/^def list():$/;"	f
+makeurl	plugin_listandedit.py	/^def makeurl(tablename, orderby, restrictor):$/;"	f
+request	plugin_listandedit.py	/^    request = current.request$/;"	v
+response	plugin_listandedit.py	/^    response = current.response$/;"	v
+session	plugin_listandedit.py	/^    session = current.session$/;"	v
+widget	plugin_listandedit.py	/^def widget():$/;"	f
