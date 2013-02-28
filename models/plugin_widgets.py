@@ -3,6 +3,7 @@ import re
 response.files.append(URL('static',
             'plugin_widgets/image_picker.js'))
 
+#TODO: move these functions to module file
 def ICONLINK(title, text, icon):
     linktitle = '{}_icon'.format(title)
     link_classes = '{} icon-only icon-{}'.format(linktitle, icon)

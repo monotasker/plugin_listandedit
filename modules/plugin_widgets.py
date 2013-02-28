@@ -1,6 +1,5 @@
 # Module holding widget functions and classes for plugin_widgets
-from gluon import A, URL
-
+from gluon import A, URL, SQLFORM
 
 class JQMODAL():
     '''
