@@ -8,7 +8,7 @@ if 0:
     session = current.session
 
 
-def list():
+def itemlist():
     """
     This plugin creates a large widget to display, edit, and add entries
     to one database table.
@@ -199,7 +199,7 @@ def makeurl(tablename, orderby, restrictor):
     rdict = {'orderby': orderby}
     if not restrictor is None:
         rdict['restrictor'] = restrictor
-    the_url = URL('plugin_listandedit', 'list.load',
+    the_url = URL('plugin_listandedit', 'itemlist.load',
                     args=[tablename], vars=rdict)
     return the_url
 
