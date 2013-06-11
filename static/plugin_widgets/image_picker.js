@@ -1,5 +1,5 @@
 
-$('.plugin_widgets_jqmodal').live('click', function(event){
+$('.plugin_widgets_jqmodal').on('click', function(event){
 //open modal dialog (using jquery-ui dialog) for image selection form
     var d_class = 'plugin_widgets_image_picker_dialog';
     // use existing dialog window if present
