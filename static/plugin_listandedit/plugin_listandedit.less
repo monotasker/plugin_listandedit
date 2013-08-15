@@ -106,34 +106,33 @@
     label                          {color:#ccc;}
     form                           {padding:0;
                                     margin:0;}
-    &:before                       {content:' ';
-                                    .tapered-shadow;}
+    &:before                       {content:' ';}
     }
 
 #page .list_control                {padding:0;
-                                    background: @greya;
-                                    border-right:1px solid @grey8;
-                                    border-left:1px solid @grey8;
+                                    background: @grayLight;
+                                    border-right:1px solid @grayDark;
+                                    border-left:1px solid @grayDark;
 
     h2                             {font-weight:normal;
-                                    color:@greye;
-                                    margin-right:@lineheight;
-                                    margin-left:@lineheight;
+                                    color:@grayLighter;
+                                    margin-right:@baseLineHeight;
+                                    margin-left:@baseLineHeight;
                                     margin-top:0;
-                                    line-height: @lineheight3;
+                                    line-height: @baseLineHeight * 2;
                                     display:inline-block;
-                                    height:@lineheight3;
-                                    font-size:@typeheight2;
+                                    height:@baseLineHeight * 2;
+                                    font-size:@baseFontSize * 1.5;
                                     .text-shadow(0,0,3px, rgba(0,0,0,0.1));
-        .restrictor                {font-size:@typeheight;}
+        .restrictor                {font-size:@baseFontSize;}
         }
 
     a                              {float:right;
                                     color:@mist;
                                     display:block;
-                                    line-height:@lineheight3;
-                                    height:@lineheight3;
-                                    margin-right:@lineheight;
+                                    line-height:@baseLineHeight * 2;
+                                    height:@baseLineHeight * 2;
+                                    margin-right:@baseLineHeight;
 
         &:hover                    {color:@white;
                                     .text-shadow(0);}

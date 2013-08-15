@@ -2,9 +2,9 @@ if 0:
     from gluon import current, URL
     response = current.response
 
-
-response.files.append(URL('static',
-            'plugin_listandedit/plugin_listandedit.css'))
+# CSS imported directly into framework.less
+#response.files.append(URL('static',
+            #'plugin_listandedit/plugin_listandedit.css'))
 response.files.append(URL('static',
             'plugin_listandedit/plugin_listandedit.js'))
 
