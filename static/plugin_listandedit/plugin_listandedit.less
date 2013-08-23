@@ -1,77 +1,75 @@
 /* plugin_listandedit */
 
-@import "../../../plugin_framework/static/plugin_framework/framework";
-
+@import "../../../plugin_framework/static/plugin_framework/css/framework.less";
 /**structure**/
-#listpane                          {width:35%;
-                                    height:600px;
-                                    overflow:auto;
-                                    padding:0;
-                                    position:relative;
+/*#listpane                          {width:35%;*/
+                                    /*height:600px;*/
+                                    /*overflow:auto;*/
+                                    /*padding:0;*/
+                                    /*position:relative;*/
 
-    li                             {display:block;
-                                    list-style-type:none;
-                                    padding:0 1em;
-        a                          {height:2.25em;
-                                    line-height:2.25em;
-                                    font-size:.9em;}
-        }
-    }
+    /*li                             {display:block;*/
+                                    /*list-style-type:none;*/
+                                    /*padding: @paddingSmall;*/
+        /*a                          {height:2.25em;*/
+                                    /*font-size:.9em;}*/
+        /*}*/
+    /*}*/
 
-#viewpane                          {float:right;
-                                    overflow:auto;
-                                    width: 65%;
-                                    padding:1.5em;
+/*#viewpane                          {float:right;*/
+                                    /*overflow:auto;*/
+                                    /*width: 65%;*/
+                                    /*padding:1.5em;*/
 
-    .plugin_listandedit_duplicate  {position:absolute;
-                                    display:block;
-                                    right:1em;
-                                    top:0;
-                                    background-color:#607890;
-                                    color:white;
-                                    padding:0.25em 1em;
-                                    font-size:0.8em;}
+    /*.plugin_listandedit_duplicate  {position:absolute;*/
+                                    /*display:block;*/
+                                    /*right:1em;*/
+                                    /*top:0;*/
+                                    /*background-color:#607890;*/
+                                    /*color:white;*/
+                                    /*padding:0.25em 1em;*/
+                                    /*font-size:0.8em;}*/
 
-        &:hover                    {background-color:#003366;
-                                    -moz-transition:all 800ms ease-out;
-                                    -webkit-transition:all 800ms ease-out;
-                                    -ms-transition:all 800ms ease-out;
-                                    -o-transition:all 800ms ease-out;
-                                    transition:all 800ms ease-out;}
-    form                           {
-        table,
-        li div                     {width: 100%;
-                                    display: block;
-            textarea               {width: 100%;
-                                    padding:1em;}
+        /*&:hover                    {background-color:#003366;*/
+                                    /*-moz-transition:all 800ms ease-out;*/
+                                    /*-webkit-transition:all 800ms ease-out;*/
+                                    /*-ms-transition:all 800ms ease-out;*/
+                                    /*-o-transition:all 800ms ease-out;*/
+                                    /*transition:all 800ms ease-out;}*/
+    /*form                           {*/
+        /*table,*/
+        /*li div                     {width: 100%;*/
+                                    /*display: block;*/
+            /*textarea               {width: 100%;*/
+                                    /*padding:1em;}*/
 
-            form                   {background-color:#eee;}
-            input[type=text],
-            select option          {padding-left:.5em;}
-            input[type=submit]     {position: absolute;
-                                    bottom:-10px;
-                                    right:0;
-                                    width:65%;
-                                    text-align: center;
-                                    opacity:0.7;
-                                    margin-left:0;
-                                    margin-right:0;
-                                    -moz-transition:all 800ms ease-out;
-                                    -webkit-transition:all 800ms ease-out;
-                                    -ms-transition:all 800ms ease-out;
-                                    -o-transition:all 800ms ease-out;
-                                    transition:all 800ms ease-out;
-                &:hover            {opacity:1;
-                                    bottom:0px;
-                                    -moz-transition:all 800ms ease-out;
-                                    -webkit-transition:all 800ms ease-out;
-                                    -ms-transition:all 800ms ease-out;
-                                    -o-transition:all 800ms ease-out;
-                                    transition:all 800ms ease-out;}
-                }
-            }
-        }
-    }
+            /*form                   {background-color:#eee;}*/
+            /*input[type=text],*/
+            /*select option          {padding-left:.5em;}*/
+            /*input[type=submit]     {position: absolute;*/
+                                    /*bottom:-10px;*/
+                                    /*right:0;*/
+                                    /*width:65%;*/
+                                    /*text-align: center;*/
+                                    /*opacity:0.7;*/
+                                    /*margin-left:0;*/
+                                    /*margin-right:0;*/
+                                    /*-moz-transition:all 800ms ease-out;*/
+                                    /*-webkit-transition:all 800ms ease-out;*/
+                                    /*-ms-transition:all 800ms ease-out;*/
+                                    /*-o-transition:all 800ms ease-out;*/
+                                    /*transition:all 800ms ease-out;*/
+                /*&:hover            {opacity:1;*/
+                                    /*bottom:0px;*/
+                                    /*-moz-transition:all 800ms ease-out;*/
+                                    /*-webkit-transition:all 800ms ease-out;*/
+                                    /*-ms-transition:all 800ms ease-out;*/
+                                    /*-o-transition:all 800ms ease-out;*/
+                                    /*transition:all 800ms ease-out;}*/
+                /*}*/
+            /*}*/
+        /*}*/
+    /*}*/
 
 /**base theme - depends on mixins and vars from plugin_framework**/
 
@@ -110,12 +108,12 @@
     }
 
 #page .list_control                {padding:0;
-                                    background: @grayLight;
-                                    border-right:1px solid @grayDark;
-                                    border-left:1px solid @grayDark;
+                                    background: @pallette1;
+                                    border-right:1px solid @pallette2;
+                                    border-left:1px solid @pallette2;
 
     h2                             {font-weight:normal;
-                                    color:@grayLighter;
+                                    color:@palletteBG;
                                     margin-right:@baseLineHeight;
                                     margin-left:@baseLineHeight;
                                     margin-top:0;

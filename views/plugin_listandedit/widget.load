@@ -20,9 +20,9 @@ Please select an item from the list.
             {{#pass}}
         </select>
     </form> -->
-    <ul>
+    <ul class='list-group'>
         {{for l in listset:}}
-        <li>{{=l}}</li>
+        <li class='list-group-item'>{{=l}}</li>
         {{pass}}
     </ul>
 </section>
