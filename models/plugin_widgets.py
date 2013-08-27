@@ -1,9 +1,4 @@
-import re
 
-response.files.append(URL('static',
-            'plugin_widgets/image_picker.js'))
-
-#TODO: move these functions to module file
 def ICONLINK(title, text, icon):
     linktitle = '{}_icon'.format(title)
     link_classes = '{} icon-only icon-{}'.format(linktitle, icon)
@@ -13,12 +8,11 @@ def ICONLINK(title, text, icon):
                 _id=linktitle)
     return link
 
-def TOOLTIP(title, text, content, direction='top', icon=None):
+def TOOLTIP(title, text, content, icon=None):
     '''
     Build and return a tooltip widget with the supplied content.
     '''
     # build widget wrapper
-    title = re.sub(' "', '-', title)
     wrapper_title = '{}_wrapper'.format(title)
     wrapper_classes = '{} tip_wrapper'.format(wrapper_title)
     tip_wrapper = DIV(_class=wrapper_classes, _id=wrapper_title)
@@ -29,10 +23,10 @@ def TOOLTIP(title, text, content, direction='top', icon=None):
     else:
         trigger_title = '{}_trigger'.format(title)
         trigger_classes = '{} trigger'.format(trigger_title)
-        tip_wrapper.append(A(text, _classes=trigger_classes, _id=trigger_title, _href='#{}'.format(title)))
+        tip_wrapper.append(A(text, _classes=trigger_classes, _id=trigger_title))
 
     # add tip content
-    tip_classes = '{} tooltip-{}'.format(title, direction)
+    tip_classes = '{} tip'.format(title)
     tip_wrapper.append(DIV(content, _class=tip_classes, _id=title))
 
     return tip_wrapper
@@ -49,5 +43,3 @@ def ROLE(content, role=None):
         return content
     else:
         return u'\u200b'
-
-
