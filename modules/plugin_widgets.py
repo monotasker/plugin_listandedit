@@ -1,5 +1,56 @@
 # Module holding widget functions and classes for plugin_widgets
-from gluon import A, URL, SQLFORM
+from gluon import A, URL, SQLFORM, DIV
+
+
+class POPOVER():
+    '''
+    Provides a bootstrap popover widget which allows html content.
+
+    If a LOAD helper is passed as the content this popover can also be
+    populated using web2py's ajax function and a separate view.
+
+
+    The parent view must include this jquery function:
+
+        $('.popover-trigger').each(function() {
+            var $this = $(this);
+            $this.popover({
+                html: true,
+                content: $this.find('.popover-content').html()
+            });
+        });
+    TODO: Put this function in a general plugin_widgets.js function
+    '''
+
+    def __init__(self):
+        ''''''
+        pass
+
+    def widget(self, linktext, content, classnames=None,
+               trigger='click', placement='bottom', **kwargs):
+        '''
+        Returns the actual popover widget.
+
+        In addition to the link text and
+        popup content, any of the bootstrap popover properties may be set by
+        passing a keyword-argument whose name is the property in question.
+
+        The inline style display:none is necessary to hide the popover content
+        initially.
+        '''
+        myid = linktext if not id else id
+        classes = "popover-trigger {}".format(classnames)
+        myargs = {'_data-trigger': trigger,
+                  '_data-placement': placement,
+                  '_data-toggle': 'popover'}
+        if kwargs:
+            newargs = {'_data-{}'.format(k): v for k, v in kwargs.iteritems()}
+            myargs.update(newargs)
+        popover = DIV(linktext, _id=myid, _class=classes, **myargs)
+        popover.append(DIV(content, _class="popover-content",
+                           _style="display: none"))
+        return popover
+
 
 class JQMODAL():
     '''
@@ -33,4 +84,4 @@ class JQMODAL():
                     _class='plugin_widgets_jqmodal',
                     _href=URL(cname, fname, args=[linkargs]),
                     cid=target)
-        return old_widget
+        return old_widget, modal_link
