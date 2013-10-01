@@ -1,7 +1,7 @@
 # coding: utf8
 import ast
 if 0:
-    from gluon import current, URL, SQLFORM, A, LOAD
+    from gluon import current, URL, SQLFORM, A
     response = current.response
     request = current.request
     db = current.db
@@ -43,7 +43,7 @@ def itemlist():
         pass
 
     #pass that name on to be used as a title for the widget
-    rname = tablename + ' (' + orderby + ')'
+    #rname = tablename + ' (' + orderby + ')'
 
     #get filtering values if any
     if 'restrictor' in request.vars:
@@ -89,13 +89,14 @@ def itemlist():
             vardict['restrictor'] = restrictor
 
         i = A(listformat, _href=URL('plugin_listandedit', 'edit.load',
-                                        args=[tablename, r.id],
-                                        vars=vardict),
-                                    _class='plugin_listandedit_list',
-                                    cid='viewpane')
+                                    args=[tablename, r.id],
+                                    vars=vardict),
+              _class='plugin_listandedit_list',
+              cid='viewpane')
         listset.append(i)
 
     return dict(listset=listset)
+
 
 def widget():
     """
@@ -174,21 +175,22 @@ def widget():
         else:
             listformat = r[fieldname]
 
-        vardict = {'tablename': tablename}
-        if not vardict is None:
+        vardict = {'tablename': tablename,
+                   'orderby': orderby}
+        if not restrictor is None:
             vardict['restrictor'] = restrictor
 
         i = A(listformat, _href=URL('plugin_listandedit', 'edit.load',
-                                        args=[tablename, r.id],
-                                        vars=vardict),
-                                    _class='plugin_listandedit_list',
-                                    cid='viewpane')
+                                    args=[tablename, r.id],
+                                    vars=vardict),
+              _class='plugin_listandedit_list',
+              cid='viewpane')
         listset.append(i)
 
     # create a link for adding a new row to the table
     adder = A('Add new', _href=URL('plugin_listandedit', 'edit.load',
-                                    args=[tablename],
-                                    vars=request.vars),
+                                   args=[tablename],
+                                   vars=request.vars),
             _class='plugin_listandedit_list',
             cid='viewpane')
 
@@ -200,7 +202,7 @@ def makeurl(tablename, orderby, restrictor):
     if not restrictor is None:
         rdict['restrictor'] = restrictor
     the_url = URL('plugin_listandedit', 'itemlist.load',
-                    args=[tablename], vars=rdict)
+                  args=[tablename], vars=rdict)
     return the_url
 
 
@@ -239,7 +241,7 @@ def dupAndEdit():
     if form.process(formname=formname).accepted:
         the_url = makeurl(tablename, orderby, restrictor)
         response.js = "web2py_component('%s', " \
-                                    "'listpane');" % the_url
+                      "'listpane');" % the_url
         response.flash = 'New record successfully created.'
     elif form.errors:
         print form.vars
@@ -282,7 +284,7 @@ def edit():
         if form.process(formname=formname).accepted:
             the_url = makeurl(tablename, orderby, restrictor)
             response.js = "web2py_component('%s', " \
-                                    "'listpane');" % the_url
+                          "'listpane');" % the_url
             response.flash = 'The changes were recorded successfully.'
             if debug: print "submitted form vars", form.vars
         elif form.errors:
@@ -298,17 +300,17 @@ def edit():
         # create a link for adding a new row to the table
         duplink = A('Make a copy of this record',
                     _href=URL('plugin_listandedit',
-                                'dupAndEdit.load',
-                                args=[tablename, rowid],
-                                vars=request.vars),
+                              'dupAndEdit.load',
+                              args=[tablename, rowid],
+                              vars=request.vars),
                     _class='plugin_listandedit_duplicate', cid='viewpane')
 
     elif len(request.args) == 1:
         formname = '%s/create' % (tablename)
 
         form = SQLFORM(db[tablename], separator='',
-                        showid=True,
-                        formstyle='ul')
+                       showid=True,
+                       formstyle='ul')
         if form.process(formname=formname).accepted:
             the_url = makeurl(tablename, orderby, restrictor)
             response.js = "web2py_component('%s', 'listpane');" % the_url
