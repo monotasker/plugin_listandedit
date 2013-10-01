@@ -20,7 +20,7 @@ class POPOVER(object):
                 content: $this.find('.popover-content').html()
             });
         });
-    TODO: Put this function in a general plugin_widgets.js function
+    TODO: Put this function in a general plugin_widgets.js file
     '''
 
     def __init__(self):
@@ -28,7 +28,7 @@ class POPOVER(object):
         pass
 
     def widget(self, linktext, content, classnames=None,
-               trigger='click', placement='bottom', **kwargs):
+               trigger='click', placement='bottom', id=None, **kwargs):
         '''
         Returns the actual popover widget.
 
@@ -120,3 +120,18 @@ def TOOLTIP(title, text, content, icon=None):
     tip_wrapper.append(DIV(content, _class=tip_classes, _id=title))
 
     return tip_wrapper
+
+
+def ROLE(content, role=None):
+    '''
+    Wrap some web2py helpers or html content in a condition so that it is only
+    returned if the current user is logged in.
+    '''
+    auth = current.auth
+    if role is None:
+        role = 'administrators'
+
+    if auth.has_membership(role):
+        return content
+    else:
+        return u'\u200b'
