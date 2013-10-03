@@ -1,6 +1,33 @@
-# Module holding widget functions and classes for plugin_widgets
-from gluon import A, URL, SQLFORM, DIV, SPAN, current
-auth = current.auth
+""" Module holding widget functions and classes for plugin_widgets """
+from gluon import A, URL, SQLFORM, DIV, SPAN, current, UL, LI
+
+
+def TABS(tablist):
+    '''
+    Provides a bootstrap tabs widget.
+    label, did, content, visible=False
+    '''
+    tabs = DIV(_class='tabbable')
+    tabnav = UL(_class='nav nav-tabs')
+    tabcontent = DIV(_class='tab-content')
+    for tab in tablist:
+        label = tab[0]
+        div_id = tab[1]
+        content = tab[2]
+        class_string = tab[3] if len(tab) > 3 else ' '
+
+        # use dict because of hyphen in data-toggle
+        a_args = {'_href': '#{}'.format(div_id),
+                  '_data-toggle': 'tab'}
+        tabnav.append(LI(A(label, **a_args)))
+        wrapper = DIV(_id=div_id, _class="tab-pane {}".format(class_string))
+        wrapper.append(content)
+        tabcontent.append(wrapper)
+
+    tabs.append(tabnav)
+    tabs.append(tabcontent)
+
+    return tabs
 
 
 class POPOVER(object):
