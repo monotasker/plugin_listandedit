@@ -1,11 +1,26 @@
 """ Module holding widget functions and classes for plugin_widgets """
-from gluon import A, URL, SQLFORM, DIV, SPAN, current, UL, LI
+from gluon import A, URL, SQLFORM, DIV, SPAN, current, UL, LI, BUTTON, H3, CAT
 
 
 def TABS(tablist):
     '''
-    Provides a bootstrap tabs widget.
-    label, did, content, visible=False
+    Returns a bootstrap 2.3.2 tabs widget in a web2py DIV() helper object.
+
+    This function expects a single argument, a list of tuples. Each tuple
+    represents a single tab in the tab set. The items in each tuple should
+    contain:
+        [0]     (required) the tab label text (str)
+        [1]     (required) the id to be assigned to the tab content div (str)
+        [2]     (required) the content to be revealed by the tab (str or
+                            web2py html helper object). If a LOAD helper is
+                            the value provided here the content of the tab
+                            will be loaded via ajax at page load.
+        [3]     (optional) extra classes to be assigned to the content
+                            div (str). If a tab is to be selected by default
+                            when the page loads, this tab should be passed a
+                            string in this position that includes the class
+                            'active'.
+    There is currently no support for pill or pull-down styles of tabs.
     '''
     tabs = DIV(_class='tabbable')
     tabnav = UL(_class='nav nav-tabs')
@@ -32,7 +47,7 @@ def TABS(tablist):
 
 class POPOVER(object):
     '''
-    Provides a bootstrap popover widget which allows html content.
+    Returns a bootstrap 2.3.2 popover widget which allows html content.
 
     If a LOAD helper is passed as the content this popover can also be
     populated using web2py's ajax function and a separate view.
@@ -78,6 +93,121 @@ class POPOVER(object):
         popover.append(DIV(content, _class="popover-content",
                            _style="display: none"))
         return popover
+
+
+def MODAL(triggertext, headertext, body,
+          footer=None, modal_classes='', trigger_classes=None, id='mymodal',
+          trigger_type='link', attributes=None):
+    '''
+    Returns a bootstrap 2.3.2 modal widget wrapped in a web2py CAT() helper.
+
+    The following positional arguments are required:
+        [0] triggertext     (str) The text for the link to trigger the modal.
+        [1] headertext      (str or 0) The text for the modal header. If the
+                            value is 0, no header will be included.
+        [2] body            (str or helper obj) The content to be displayed in
+                            the modal body. If this is a LOAD helper the body
+                            content will be loaded via ajax.
+
+    The following named arguments are optional:
+        :footer              (str, helper obj, or 0) The content to be displayed in
+                            the modal footer. If this argument is not provided,
+                            the default footer is a simple "Close" button. If
+                            the value is the integer 0, no footer will be
+                            included at all.
+        :modal_classes       (str) A string including the extra classes to be
+                            assigned to the modal div.
+        :trigger_classes     (str) A string including the extra classes to be
+                            assigned to the button/link triggering the modal.
+        :id                  (str or int) The id to be assigned to the modal div.
+                            defaults to 'mymodal'. If multiple modals are
+                            present on a paget this value must be specified
+                            (and distinct) for each. The id for the trigger
+                            will always be this same string with the suffix
+                            '_trigger'.
+        :trigger_type        (str: 'button' | 'link') Specifies the html entity
+                            to be used to trigger the modal. Defaults to 'link'
+                            which returns an A() helper.
+        :attributes          (dict) The names and values of any attributes to
+                            be assigned to the modal div. These can include
+                            data-attributes for setting additional options (as
+                            per the bootstrap 2.3.2 api).
+
+    The close button in the default footer requires no extra javascript (beyond
+    the Bootstrap modal plugin).
+    '''
+    # create trigger
+    t_classes = trigger_classes if trigger_classes else 'btn'
+    t_args = {'_data-toggle': 'modal',
+              '_data-target': '#{}'.format(id),
+              '_id': '{}_trigger'.format(id),
+              '_class': t_classes}
+    if attributes:
+        t_args.update(attributes)
+    if trigger_type == 'link':
+        trigger = A(triggertext, **t_args)
+    else:
+        trigger = BUTTON(triggertext, **t_args)
+
+    # create wrapper div for modal
+    modal_attrs = {'_tabindex': '-1',
+                   '_role': 'dialog',
+                   '_aria-labelledby': 'myModalLabel',
+                   '_aria-hidden': 'true'}
+    modal = DIV(_class="modal hide fade {}".format(modal_classes),
+                _id=id, **modal_attrs)
+
+    # add header
+    if headertext != 0:
+        m_head = DIV(H3(headertext), _class="modal-header")
+        modal.append(m_head)
+    else:
+        pass
+
+    # add body content
+    modal.append(DIV(body, _class='modal-body {}'.format(modal_classes)))
+    # add footer
+    if footer and footer != 0:
+        modal.append(DIV(footer, _class='modal-footer'))
+    elif not footer:
+        attrs = {'_type': 'button',
+                 '_class': 'close',
+                 '_data-dismiss': "modal",
+                 '_aria-hidden': "true"}
+        modal.append(DIV(BUTTON('Close', **attrs), _class='modal-footer'))
+    else:
+        pass
+
+    return CAT(trigger, modal)
+
+
+def ACCORDION(panels, id='my_accordion'):
+    '''
+    [0]     pid
+    [1]     panel link text
+    [2]     panel content
+    [3]     body classes (string); 'in' marks default panel
+    '''
+    acc = DIV(_class='accordion', _id=id)
+    for panel in panels:
+        pid = panel[0]
+        linktext = panel[1]
+        content = panel[2]
+        bclasses = panel[3] if (len(panel) > 0) else ''
+        linkattrs = {'_class': "accordion-toggle {}-toggle".format(pid),
+                     '_data-toggle': "collapse",
+                     '_data-parent': "#{}".format(id),
+                     '_href': "#{}".format(pid)}
+        headattrs = {'_class': "accordion-heading"}
+        bodyattrs = {'_class': 'accordion-body collapse {}'.format(bclasses)}
+        innerattrs = {'_class': 'accordion-inner'}
+        groupattrs = {'_class': "accordion-group"}
+        p = DIV(DIV(A(linktext, **linkattrs), **headattrs),
+                DIV(DIV(content, **bodyattrs), **innerattrs),
+                **groupattrs)
+
+        acc.append(p)
+    return acc
 
 
 class JQMODAL():

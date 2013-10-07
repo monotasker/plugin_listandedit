@@ -1,0 +1,5 @@
+*.un~
+*.bak
+*.pyc
+*.swo
+tags
