@@ -171,8 +171,8 @@ def MODAL(triggertext, headertext, body,
         modal.append(DIV(footer, _class='modal-footer'))
     elif not footer:
         attrs = {'_type': 'button',
-                 '_class': 'close',
                  '_data-dismiss': "modal",
+                 '_class': "pull-right",
                  '_aria-hidden': "true"}
         modal.append(DIV(BUTTON('Close', **attrs), _class='modal-footer'))
     else:
