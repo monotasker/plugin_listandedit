@@ -137,7 +137,9 @@ def MODAL(triggertext, headertext, body,
     the Bootstrap modal plugin).
     '''
     # create trigger
-    t_classes = trigger_classes if trigger_classes else 'btn'
+    t_classes = trigger_classes if trigger_classes else ''
+    if trigger_type == 'button':
+        t_classes += 'btn'
     t_args = {'_data-toggle': 'modal',
               '_data-target': '#{}'.format(id),
               '_id': '{}_trigger'.format(id),
