@@ -1,7 +1,7 @@
 # coding: utf8
 import ast
 if 0:
-    from gluon import current, URL, SQLFORM, A
+    from gluon import current, URL, SQLFORM, A, BEAUTIFY
     response = current.response
     request = current.request
     db = current.db
@@ -76,11 +76,9 @@ def itemlist():
         fieldname = db[tablename].fields[1]
         # use format string from db table definition to list entries (if
         #available)
-        if db[tablename]._format:
-            try:
-                listformat = db[tablename]._format % r
-            except:
-                listformat = db[tablename]._format(r)
+        fmt = db[tablename]._format
+        if fmt:
+            listformat = fmt(r) if callable(fmt) else fmt % r
         else:
             listformat = r[fieldname]
 
@@ -120,11 +118,7 @@ def widget():
     of fields in the table and the values are the values to be allowed in those
     fields when generating the list.
     """
-    debug = True
-    #get table to be listed
     tablename = request.args[0]
-
-    #allow ordering of list based on values in any field
     orderby = 'id'
     try:
         if 'orderby' in request.vars:
@@ -142,7 +136,6 @@ def widget():
         restrictor = ast.literal_eval(restr)
     else:
         restrictor = None
-    if debug: print 'restrictor:', restrictor
 
     #check to make sure the required argument names a table in the db
     if not tablename in db.tables():
@@ -183,7 +176,7 @@ def widget():
         i = A(listformat, _href=URL('plugin_listandedit', 'edit.load',
                                     args=[tablename, r.id],
                                     vars=vardict),
-              _class='plugin_listandedit_list',
+              _class='plugin_listandedit_addnew',
               cid='viewpane')
         listset.append(i)
 
@@ -191,7 +184,7 @@ def widget():
     adder = A('Add new', _href=URL('plugin_listandedit', 'edit.load',
                                    args=[tablename],
                                    vars=request.vars),
-            _class='plugin_listandedit_list',
+            _class='plugin_listandedit_addnew',
             cid='viewpane')
 
     return dict(listset=listset, adder=adder, rname=rname)
@@ -209,11 +202,6 @@ def makeurl(tablename, orderby, restrictor):
 def dupAndEdit():
     """Create and process a form to insert a new record, pre-populated
     with field values copied from an existing record."""
-
-    verbose = 0
-    if verbose == 1:
-        print 'starting plugin_listandedit.dupAndEdit ******************'
-
     tablename = request.args[0]
     rowid = request.args[1]
     orderby = request.vars['orderby'] or 'id'
@@ -221,7 +209,6 @@ def dupAndEdit():
     formname = '%s/%s/dup' % (tablename, rowid)
 
     src = db(db[tablename].id == rowid).select().first()
-    #print src
     form = SQLFORM(db[tablename], separator='', showid=True, formstyle='ul')
 
     for v in db[tablename].fields:
@@ -233,9 +220,6 @@ def dupAndEdit():
             #somehow test to see if the field is AjaxSelect widget
             #if so, set session value for field
             wrappername = tablename + '_' + v + '_loader'
-            if verbose == 1:
-                print 'wrappername:', wrappername
-                print 'source record value:', src[v]
             session[wrappername] = src[v]
 
     if form.process(formname=formname).accepted:
@@ -244,7 +228,8 @@ def dupAndEdit():
                       "'listpane');" % the_url
         response.flash = 'New record successfully created.'
     elif form.errors:
-        print form.vars
+        print 'listandedit form errors:', [e for e in form.errors]
+        print 'listandedit form vars:', form.vars
         response.flash = 'Sorry, there was an error processing '\
                          'the form. The new record has not been created.'
     else:
@@ -286,9 +271,10 @@ def edit():
             response.js = "web2py_component('%s', " \
                           "'listpane');" % the_url
             response.flash = 'The changes were recorded successfully.'
-            if debug: print "submitted form vars", form.vars
+            print "listandedit submitted form vars:", form.vars
         elif form.errors:
-            print form.errors
+            print 'listandedit form errors:', BEAUTIFY(form.errors)
+            print 'listandedit form vars:', form.vars
             response.flash = 'Sorry, there was an error processing ' \
                              'the form. The changes have not been recorded.'
 
