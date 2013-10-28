@@ -1,5 +1,7 @@
 # coding: utf8
 import ast
+#import traceback
+from pprint import pprint
 if 0:
     from gluon import current, URL, SQLFORM, A
     response = current.response
@@ -181,10 +183,10 @@ def widget():
         listset.append(i)
 
     # create a link for adding a new row to the table
-    adder = A('Add new', _href=URL('plugin_listandedit', 'edit.load',
+    adder = A(u'\u200b', _href=URL('plugin_listandedit', 'edit.load',
                                    args=[tablename],
                                    vars=request.vars),
-            _class='plugin_listandedit_addnew',
+            _class='plugin_listandedit_addnew icon-plus badge badge-success',
             cid='viewpane')
 
     return dict(listset=listset, adder=adder, rname=rname)
@@ -248,9 +250,7 @@ def edit():
             function of this controller, opening a form to insert a new record
             and pre-populating it with data copied from the current record.
     """
-    debug = True
-
-    if debug: print '\n starting controllers/plugin_listandedit edit()'
+    print '\n starting controllers/plugin_listandedit edit()'
 
     tablename = request.args[0]
     orderby = request.vars['orderby'] or 'id'
@@ -259,7 +259,6 @@ def edit():
     if len(request.args) > 1:
         rowid = request.args[1]
         formname = '%s/%s' % (tablename, rowid)
-        if debug: print 'formname: ', formname
 
         #TODO: Set value of "project" field programatically
         form = SQLFORM(db[tablename], rowid, separator='',
@@ -267,27 +266,41 @@ def edit():
                 showid=True,
                 formstyle='ul')
         # FIXME: ajaxselect field value has to be added manually
-        for f in ['steps']:
-            if f in request.vars.keys() and f not in form.vars.keys():
-                form.vars[f] = request.vars[f]
+        if 'id' in request.vars.keys():
+            extras = [f for f in db[tablename].fields
+                      if f not in form.vars.keys()]
+            for e in extras:
+                form.vars[e] = request.vars[e] if e in request.vars.keys() \
+                    else ''
+                print 'adding field', e, ':', form.vars[e]
+        #except Exception:
+            #print traceback.format_exc(5)
+        #for f in ['steps', 'slides', 'map_location', 'npcs', 'tags',
+                  #'tags_secondary', 'tags_ahead', 'locations', 'hints',
+                  #'instructions']:
         if form.process(formname=formname).accepted:
             the_url = makeurl(tablename, orderby, restrictor)
             response.js = "window.setTimeout(" \
                           "web2py_component('{}', " \
                           "'listpane'), 500);".format(the_url)
             response.flash = 'The changes were recorded successfully.'
+            print '\n\nform processed'
             print "listandedit submitted form vars:", form.vars
         elif form.errors:
-            from pprint import pprint
-            print 'listandedit form errors:', pprint(form.errors)
-            print 'listandedit form vars', pprint(form.vars)
-            print 'listandedit request vars', pprint(request.vars)
+            print '\n\nlistandedit form errors:'
+            pprint({k: v for k, v in form.errors.iteritems()})
+            print '\n\nlistandedit form vars'
+            pprint({k: v for k, v in form.vars.iteritems()})
+            print '\n\nlistandedit request vars'
+            pprint({k: v for k, v in request.vars.iteritems()})
             response.flash = 'Sorry, there was an error processing ' \
                              'the form. The changes have not been recorded.'
 
         else:
             #TODO: Why is this line being run when a record is first selected?
-            print form.vars
+            print '\n\nform not processed, but no errors'
+            pprint({k: v for k, v in form.vars.iteritems()})
+            pprint({k: v for k, v in request.vars.iteritems()})
             pass
 
         # create a link for adding a new row to the table
@@ -308,7 +321,7 @@ def edit():
             the_url = makeurl(tablename, orderby, restrictor)
             response.js = "web2py_component('%s', 'listpane');" % the_url
             response.flash = 'New record successfully created.'
-            if debug: print "submitted form vars", form.vars
+            print "submitted form vars", form.vars
         elif form.errors:
             print form.vars
             response.flash = 'Sorry, there was an error processing '\
