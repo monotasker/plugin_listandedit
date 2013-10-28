@@ -273,11 +273,6 @@ def edit():
                 form.vars[e] = request.vars[e] if e in request.vars.keys() \
                     else ''
                 print 'adding field', e, ':', form.vars[e]
-        #except Exception:
-            #print traceback.format_exc(5)
-        #for f in ['steps', 'slides', 'map_location', 'npcs', 'tags',
-                  #'tags_secondary', 'tags_ahead', 'locations', 'hints',
-                  #'instructions']:
         if form.process(formname=formname).accepted:
             the_url = makeurl(tablename, orderby, restrictor)
             response.js = "window.setTimeout(" \
