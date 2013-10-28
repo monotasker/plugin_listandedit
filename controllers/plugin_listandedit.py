@@ -1,7 +1,7 @@
 # coding: utf8
 import ast
 if 0:
-    from gluon import current, URL, SQLFORM, A, BEAUTIFY
+    from gluon import current, URL, SQLFORM, A
     response = current.response
     request = current.request
     db = current.db
@@ -266,15 +266,22 @@ def edit():
                 deletable=True,
                 showid=True,
                 formstyle='ul')
+        # FIXME: ajaxselect field value has to be added manually
+        for f in ['steps']:
+            if f in request.vars.keys() and f not in form.vars.keys():
+                form.vars[f] = request.vars[f]
         if form.process(formname=formname).accepted:
             the_url = makeurl(tablename, orderby, restrictor)
-            response.js = "web2py_component('%s', " \
-                          "'listpane');" % the_url
+            response.js = "window.setTimeout(" \
+                          "web2py_component('{}', " \
+                          "'listpane'), 500);".format(the_url)
             response.flash = 'The changes were recorded successfully.'
             print "listandedit submitted form vars:", form.vars
         elif form.errors:
-            print 'listandedit form errors:', BEAUTIFY(form.errors)
-            print 'listandedit form vars:', form.vars
+            from pprint import pprint
+            print 'listandedit form errors:', pprint(form.errors)
+            print 'listandedit form vars', pprint(form.vars)
+            print 'listandedit request vars', pprint(request.vars)
             response.flash = 'Sorry, there was an error processing ' \
                              'the form. The changes have not been recorded.'
 
