@@ -172,6 +172,7 @@ def widget():
 
         vardict = {'tablename': tablename,
                    'orderby': orderby}
+        vardict.update(request.vars)
         if not restrictor is None:
             vardict['restrictor'] = restrictor
 
@@ -214,15 +215,16 @@ def dupAndEdit():
     form = SQLFORM(db[tablename], separator='', showid=True, formstyle='ul')
 
     for v in db[tablename].fields:
-        if v != 'id' and v in src:
-            form.vars[v] = src[v]
-            #TODO: somehow have the widget refreshed with the pre-populated
-            #value. maybe this would work by pre-creating a session value for
-            #the new form?
-            #somehow test to see if the field is AjaxSelect widget
-            #if so, set session value for field
-            wrappername = tablename + '_' + v + '_loader'
-            session[wrappername] = src[v]
+        # on opening populate duplicate values
+        form.vars[v] = src[v] if v != 'id' and v in src else None
+        # FIXME: ajaxselect field values have to be added manually
+        if db[tablename].fields[1] in request.vars.keys():  # on submit add ajaxselect values
+            extras = [f for f in db[tablename].fields
+                      if f not in form.vars.keys()]
+            for e in extras:
+                form.vars[e] = request.vars[e] if e in request.vars.keys() \
+                    else ''
+                print 'adding field', e, ':', form.vars[e]
 
     if form.process(formname=formname).accepted:
         the_url = makeurl(tablename, orderby, restrictor)
@@ -252,27 +254,48 @@ def edit():
     """
     print '\n starting controllers/plugin_listandedit edit()'
 
-    tablename = request.args[0]
-    orderby = request.vars['orderby'] or 'id'
-    restrictor = request.vars['restrictor'] or None
     duplink = ''
-    if len(request.args) > 1:
-        rowid = request.args[1]
-        formname = '%s/%s' % (tablename, rowid)
+    if not request.args is None:
+        tablename = request.args[0]
+        orderby = request.vars['orderby'] or 'id'
+        restrictor = request.vars['restrictor'] or None
 
-        #TODO: Set value of "project" field programatically
-        form = SQLFORM(db[tablename], rowid, separator='',
+        if len(request.args) > 1:  # editing specific item
+            rowid = request.args[1]
+            formname = '%s/%s' % (tablename, rowid)
+            rargs = [db[tablename], rowid]
+
+            # create a link for adding a new row to the table
+            duplink = A('Make a copy of this record',
+                        _href=URL('plugin_listandedit',
+                                'dupAndEdit.load',
+                                args=[tablename, rowid],
+                                vars=request.vars),
+                        _class='plugin_listandedit_duplicate', cid='viewpane')
+
+        elif len(request.args) == 1:  # creating new item
+            formname = '%s/create' % (tablename)
+            rargs = [db[tablename]]
+
+        print request.args
+        print rargs
+        form = SQLFORM(*rargs, separator='',
                 deletable=True,
                 showid=True,
                 formstyle='ul')
-        # FIXME: ajaxselect field value has to be added manually
-        if 'id' in request.vars.keys():
+
+        # FIXME: ajaxselect field values have to be added manually
+        # FIXME: this check will fail if ajaxselect widget is for field indx[1]
+        if db[tablename].fields[1] in request.vars.keys():
             extras = [f for f in db[tablename].fields
                       if f not in form.vars.keys()]
             for e in extras:
                 form.vars[e] = request.vars[e] if e in request.vars.keys() \
                     else ''
                 print 'adding field', e, ':', form.vars[e]
+        else:
+            pass
+
         if form.process(formname=formname).accepted:
             the_url = makeurl(tablename, orderby, restrictor)
             response.js = "window.setTimeout(" \
@@ -298,34 +321,9 @@ def edit():
             pprint({k: v for k, v in request.vars.iteritems()})
             pass
 
-        # create a link for adding a new row to the table
-        duplink = A('Make a copy of this record',
-                    _href=URL('plugin_listandedit',
-                              'dupAndEdit.load',
-                              args=[tablename, rowid],
-                              vars=request.vars),
-                    _class='plugin_listandedit_duplicate', cid='viewpane')
-
-    elif len(request.args) == 1:
-        formname = '%s/create' % (tablename)
-
-        form = SQLFORM(db[tablename], separator='',
-                       showid=True,
-                       formstyle='ul')
-        if form.process(formname=formname).accepted:
-            the_url = makeurl(tablename, orderby, restrictor)
-            response.js = "web2py_component('%s', 'listpane');" % the_url
-            response.flash = 'New record successfully created.'
-            print "submitted form vars", form.vars
-        elif form.errors:
-            print form.vars
-            response.flash = 'Sorry, there was an error processing '\
-                             'the form. The new record has not been created.'
-        else:
-            pass
-
     else:
         response.flash = 'Sorry, you need to specify a type of record before' \
-                'I can list the records.'
+                         'I can list the records.'
+        form = None
 
-    return dict(form=form, duplink=duplink)
+    return {form: form, duplink: duplink}
