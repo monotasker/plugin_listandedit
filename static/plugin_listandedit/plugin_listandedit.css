@@ -1277,7 +1277,7 @@ textarea {
 }
 body {
   margin: 0;
-  font-family: 'SBLGreekRegular', Gentium, 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', Times, serif;
+  font-family: 'SBL Greek', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', Times, serif;
   font-size: 16px;
   line-height: 24px;
   color: #333333;
@@ -1989,7 +1989,7 @@ input,
 button,
 select,
 textarea {
-  font-family: 'SBLGreekRegular', Gentium, 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', Times, serif;
+  font-family: 'SBL Greek', 'Palatino Linotype', Palatino, Georgia, 'Times New Roman', Times, serif;
 }
 label {
   display: block;
@@ -9625,14 +9625,14 @@ a:link {
 }
 /**base theme - depends on mixins and vars from plugin_framework**/
 #listpane {
-  background-color: #f2f0e6;
-  border: 1px solid #e1ddc4;
+  background-color: #f8f0e5;
+  border: 1px solid #edd9bd;
 }
 #listpane ul {
   padding-left: 0;
 }
 #listpane ul li {
-  background-color: #f2f0e6;
+  background-color: #f8f0e5;
   /*background-image:-moz-linear-gradient(#f5f5f5, #eee);*/
 
   /*background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#f5f5f5), to(#eee));*/
@@ -9642,7 +9642,7 @@ a:link {
   /*background-image:-ms-linear-gradient(#f5f5f5, #eee);*/
 
   border-bottom: 1px solid #d8d3b3;
-  border-top: 1px solid #ffffff;
+  border-top: 1px solid #fcfbf7;
 }
 #listpane ul li a,
 #listpane ul li a:link,
@@ -9650,7 +9650,7 @@ a:link {
   color: #8e4b46;
 }
 #listpane ul li:hover {
-  background-color: #ffffff;
+  background-color: #fcfbf7;
   background-image: none;
 }
 #listpane ul li:hover a {
@@ -9679,14 +9679,14 @@ a:link {
 #page .list_control {
   padding: 0;
   background: #428bd7;
-  color: #ffffff;
+  color: #fcfbf7;
   border-right: 1px solid #428bd7;
   border-left: 1px solid #428bd7;
   height: 36px;
 }
 #page .list_control h2 {
   font-weight: normal;
-  color: #ffffff;
+  color: #fcfbf7;
   line-height: 36px;
   height: 36px;
   font-size: 24px;
