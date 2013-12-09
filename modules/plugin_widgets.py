@@ -103,6 +103,15 @@ def MODAL(triggertext, headertext, body,
     '''
     Returns a bootstrap 2.3.2 modal widget wrapped in a web2py CAT() helper.
 
+    The returned widget can be included in a view as a single helper, in which
+    case the hidden modal window is placed immediately following the trigger
+    element in the DOM. This is not desireable, though, if the parent of the
+    trigger element has relative positioning, since the modal window will
+    appear behind its dark background mask (and possibly behind other page
+    elements). In that case, one can include the link alone as MODAL()[0]. The
+    modal window can then be included separately at a higher level of the html
+    structure by calling MODAL()[1] at the appropriate point in the view.
+
     The following positional arguments are required:
         [0] triggertext     (str) The text for the link to trigger the modal.
         [1] headertext      (str or 0) The text for the modal header. If the
