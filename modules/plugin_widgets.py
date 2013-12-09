@@ -21,6 +21,8 @@ def TABS(tablist):
                             string in this position that includes the class
                             'active'.
     There is currently no support for pill or pull-down styles of tabs.
+
+    To make one tab the default, include 'active' in its class_string.
     '''
     tabs = DIV(_class='tabbable')
     tabnav = UL(_class='nav nav-tabs')
@@ -34,7 +36,7 @@ def TABS(tablist):
         # use dict because of hyphen in data-toggle
         a_args = {'_href': '#{}'.format(div_id),
                   '_data-toggle': 'tab'}
-        tabnav.append(LI(A(label, **a_args)))
+        tabnav.append(LI(A(label, **a_args), _class=class_string))
         wrapper = DIV(_id=div_id, _class="tab-pane {}".format(class_string))
         wrapper.append(content)
         tabcontent.append(wrapper)
