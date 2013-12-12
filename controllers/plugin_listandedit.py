@@ -224,7 +224,7 @@ def dupAndEdit():
             for e in extras:
                 form.vars[e] = request.vars[e] if e in request.vars.keys() \
                     else ''
-                print 'adding field', e, ':', form.vars[e]
+                #print 'adding field', e, ':', form.vars[e]
 
     if form.process(formname=formname).accepted:
         the_url = makeurl(tablename, orderby, restrictor)
@@ -232,8 +232,8 @@ def dupAndEdit():
                       "'listpane');" % the_url
         response.flash = 'New record successfully created.'
     elif form.errors:
-        print 'listandedit form errors:', [e for e in form.errors]
-        print 'listandedit form vars:', form.vars
+        #print 'listandedit form errors:', [e for e in form.errors]
+        #print 'listandedit form vars:', form.vars
         response.flash = 'Sorry, there was an error processing '\
                          'the form. The new record has not been created.'
     else:
@@ -252,7 +252,7 @@ def edit():
             function of this controller, opening a form to insert a new record
             and pre-populating it with data copied from the current record.
     """
-    print '\n starting controllers/plugin_listandedit edit()'
+    #print '\n starting controllers/plugin_listandedit edit()'
 
     duplink = ''
     if not request.args is None:
@@ -277,8 +277,8 @@ def edit():
             formname = '%s/create' % (tablename)
             rargs = [db[tablename]]
 
-        print request.args
-        print rargs
+        #print request.args
+        #print rargs
         form = SQLFORM(*rargs, separator='',
                 deletable=True,
                 showid=True,
@@ -292,7 +292,7 @@ def edit():
             for e in extras:
                 form.vars[e] = request.vars[e] if e in request.vars.keys() \
                     else ''
-                print 'adding field', e, ':', form.vars[e]
+                #print 'adding field', e, ':', form.vars[e]
         else:
             pass
 
@@ -302,8 +302,8 @@ def edit():
                           "web2py_component('{}', " \
                           "'listpane'), 500);".format(the_url)
             response.flash = 'The changes were recorded successfully.'
-            print '\n\nform processed'
-            print "listandedit submitted form vars:", form.vars
+            #print '\n\nform processed'
+            #print "listandedit submitted form vars:", form.vars
         elif form.errors:
             print '\n\nlistandedit form errors:'
             pprint({k: v for k, v in form.errors.iteritems()})
@@ -315,10 +315,6 @@ def edit():
                              'the form. The changes have not been recorded.'
 
         else:
-            #TODO: Why is this line being run when a record is first selected?
-            print '\n\nform not processed, but no errors'
-            pprint({k: v for k, v in form.vars.iteritems()})
-            pprint({k: v for k, v in request.vars.iteritems()})
             pass
 
     else:
