@@ -1,0 +1,125 @@
+/* plugin_listandedit */
+
+@import "../../../plugin_framework/static/plugin_framework/css/framework.less";
+
+@col0: lighten(@pallette2, 50%); // #f5f5f5
+@col1: lighten(@pallette2, 15%);  // #eee
+@col2: @pallette2;  // #ccc
+@col3: desaturate(lighten(@accent2, 15%), 35%);
+@col4: desaturate(lighten(@accent1, 5%), 35%);
+
+#listpane                          {width:33%;
+                                    height:600px;
+                                    overflow:auto;
+                                    padding:0;
+                                    position:relative;
+    ul                             {margin-left:0;
+        li                         {display:block;
+                                    list-style-type:none;
+                                    padding: @paddingSmall;
+            a                      {font-size: @fontSizeSmall;}
+        }
+    }
+}
+
+#page .list_control                {padding:0;
+    h2                             { .text-shadow(0,0,3px, rgba(0,0,0,0.1));
+                                    display: inline-block;
+                                    margin-right:@baseLineHeight;
+                                    margin-left:@baseLineHeight;
+                                    margin-top:0;
+                                    display:inline-block;
+    }
+    a                              {.pull-right;
+                                    display:block;
+                                    text-decoration:none;
+                                    padding:0;
+                                    margin-right:0;
+    }
+}
+#viewpane                          {.pull-right;
+                                    overflow:auto;
+                                    width: 65%;
+                                    height: 600px;
+                                    position:relative;
+    form                           {margin: 0; 
+                                    padding: 0;
+        div.w2p_fw                 {display:block;}
+        textarea                   {width: 90%;}
+    }
+    .plugin_listandedit_duplicate  {position:absolute;
+                                    display:block;
+                                    right: (@baseLineHeight/2);
+                                    top:0;
+    }
+}
+
+/**base theme - depends on mixins and vars from plugin_framework**/
+
+#listpane                          {background-color: @col1;  // 
+                                    border:1px solid darken(@col1, 10%); 
+
+    ul                             {padding-left:0;
+
+        li                         {background-color: @col1;
+                                    /*background-image:-moz-linear-gradient(#f5f5f5, #eee);*/
+                                    /*background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#f5f5f5), to(#eee));*/
+                                    /*background-image:-o-linear-gradient(#f5f5f5, #eee);*/
+                                    /*background-image:-ms-linear-gradient(#f5f5f5, #eee);*/
+                                    border-bottom: 1px solid @col2;
+                                    border-top:1px solid @col0;
+            a,
+            a:link,
+            a:visited              {color:@col4;}
+
+            &:hover                    {background-color:@col0;
+                                        background-image:none;
+                a                      {color:darken(@col4, 10%);}
+                }
+            }
+        }
+    }
+
+#viewpane                          {background: transparent;
+    label                          {color:@col2;}
+    form                           {}
+    .plugin_listandedit_duplicate  {background-color:@col3;
+                                    color:@white;
+                                    padding:0.25em 1em;
+                                    font-size:@fontSizeSmall;
+        &:hover                    {background-color:darken(@col3, 10%);
+                                    .transition();}
+    }
+}
+
+#page .list_control                {padding:0;
+                                    background: @col3;
+                                    color:@col0;
+                                    border-right:1px solid @col3;
+                                    border-left:1px solid @col3;
+                                    height:(@baseLineHeight * 1.5);
+
+    h2                             {font-weight:normal;
+                                    color:@col0;
+                                    line-height: (@baseLineHeight * 1.5);
+                                    height: (@baseLineHeight * 1.5);
+                                    font-size:@baseFontSize * 1.5;
+                                    .text-shadow(0,0,3px, rgba(0,0,0,0.1));
+        .restrictor                {font-size:@baseFontSize;
+                                    line-height: (@baseLineHeight * 1.5);
+                                    height: (@baseLineHeight * 1.5);}
+        .list_count                {color:@white;}
+    }
+    a                              {float:right;
+                                    color:@white;
+                                    text-align:center;
+                                    line-height: (@baseLineHeight * 1.5);
+                                    height: (@baseLineHeight * 1.5);
+                                    width: (@baseLineHeight * 1.5);
+                                    font-size:@fontSizeLarge;
+                                    text-decoration:none;
+                                    .border-radius(0);
+        &:hover                    {color:@white;}
+    }
+}
+

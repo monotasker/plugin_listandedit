@@ -1,5 +1,9 @@
-*.un~
-*.bak
 *.pyc
+*.bak
+*.swp
 *.swo
-tags
+*~
+errors/*
+sessions/*
+private/*
+databases/*
