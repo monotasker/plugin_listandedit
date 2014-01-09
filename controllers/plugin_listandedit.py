@@ -277,8 +277,8 @@ def edit():
             formname = '%s/create' % (tablename)
             rargs = [db[tablename]]
 
-        #print request.args
-        #print rargs
+        print request.args
+        print rargs
         form = SQLFORM(*rargs, separator='',
                 deletable=True,
                 showid=True,
@@ -292,7 +292,9 @@ def edit():
             for e in extras:
                 form.vars[e] = request.vars[e] if e in request.vars.keys() \
                     else ''
-                #print 'adding field', e, ':', form.vars[e]
+                print 'adding field', e, ':', form.vars[e]
+            if 'id' in form.vars.keys() and form.vars['id'] in (None, ''):
+                del(form.vars['id'])
         else:
             pass
 
@@ -302,8 +304,8 @@ def edit():
                           "web2py_component('{}', " \
                           "'listpane'), 500);".format(the_url)
             response.flash = 'The changes were recorded successfully.'
-            #print '\n\nform processed'
-            #print "listandedit submitted form vars:", form.vars
+            print '\n\nform processed'
+            print "listandedit submitted form vars:", form.vars
         elif form.errors:
             print '\n\nlistandedit form errors:'
             pprint({k: v for k, v in form.errors.iteritems()})
@@ -315,6 +317,7 @@ def edit():
                              'the form. The changes have not been recorded.'
 
         else:
+            print '\n\nno errors but form not processed:', form.vars
             pass
 
     else:
