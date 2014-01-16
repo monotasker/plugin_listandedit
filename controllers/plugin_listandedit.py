@@ -1,7 +1,9 @@
 # coding: utf8
 import ast
+#import traceback
+from pprint import pprint
 if 0:
-    from gluon import current, URL, SQLFORM, A, LOAD
+    from gluon import current, URL, SQLFORM, A
     response = current.response
     request = current.request
     db = current.db
@@ -43,7 +45,7 @@ def itemlist():
         pass
 
     #pass that name on to be used as a title for the widget
-    rname = tablename + ' (' + orderby + ')'
+    #rname = tablename + ' (' + orderby + ')'
 
     #get filtering values if any
     if 'restrictor' in request.vars:
@@ -76,11 +78,9 @@ def itemlist():
         fieldname = db[tablename].fields[1]
         # use format string from db table definition to list entries (if
         #available)
-        if db[tablename]._format:
-            try:
-                listformat = db[tablename]._format % r
-            except:
-                listformat = db[tablename]._format(r)
+        fmt = db[tablename]._format
+        if fmt:
+            listformat = fmt(r) if callable(fmt) else fmt % r
         else:
             listformat = r[fieldname]
 
@@ -89,13 +89,14 @@ def itemlist():
             vardict['restrictor'] = restrictor
 
         i = A(listformat, _href=URL('plugin_listandedit', 'edit.load',
-                                        args=[tablename, r.id],
-                                        vars=vardict),
-                                    _class='plugin_listandedit_list',
-                                    cid='viewpane')
+                                    args=[tablename, r.id],
+                                    vars=vardict),
+              _class='plugin_listandedit_list',
+              cid='viewpane')
         listset.append(i)
 
     return dict(listset=listset)
+
 
 def widget():
     """
@@ -119,11 +120,7 @@ def widget():
     of fields in the table and the values are the values to be allowed in those
     fields when generating the list.
     """
-    debug = True
-    #get table to be listed
     tablename = request.args[0]
-
-    #allow ordering of list based on values in any field
     orderby = 'id'
     try:
         if 'orderby' in request.vars:
@@ -141,7 +138,6 @@ def widget():
         restrictor = ast.literal_eval(restr)
     else:
         restrictor = None
-    if debug: print 'restrictor:', restrictor
 
     #check to make sure the required argument names a table in the db
     if not tablename in db.tables():
@@ -174,22 +170,24 @@ def widget():
         else:
             listformat = r[fieldname]
 
-        vardict = {'tablename': tablename}
-        if not vardict is None:
+        vardict = {'tablename': tablename,
+                   'orderby': orderby}
+        vardict.update(request.vars)
+        if not restrictor is None:
             vardict['restrictor'] = restrictor
 
         i = A(listformat, _href=URL('plugin_listandedit', 'edit.load',
-                                        args=[tablename, r.id],
-                                        vars=vardict),
-                                    _class='plugin_listandedit_list',
-                                    cid='viewpane')
+                                    args=[tablename, r.id],
+                                    vars=vardict),
+              _class='plugin_listandedit_addnew',
+              cid='viewpane')
         listset.append(i)
 
     # create a link for adding a new row to the table
-    adder = A('Add new', _href=URL('plugin_listandedit', 'edit.load',
-                                    args=[tablename],
-                                    vars=request.vars),
-            _class='plugin_listandedit_list',
+    adder = A(u'\u200b', _href=URL('plugin_listandedit', 'edit.load',
+                                   args=[tablename],
+                                   vars=request.vars),
+            _class='plugin_listandedit_addnew icon-plus badge badge-success',
             cid='viewpane')
 
     return dict(listset=listset, adder=adder, rname=rname)
@@ -200,18 +198,13 @@ def makeurl(tablename, orderby, restrictor):
     if not restrictor is None:
         rdict['restrictor'] = restrictor
     the_url = URL('plugin_listandedit', 'itemlist.load',
-                    args=[tablename], vars=rdict)
+                  args=[tablename], vars=rdict)
     return the_url
 
 
 def dupAndEdit():
     """Create and process a form to insert a new record, pre-populated
     with field values copied from an existing record."""
-
-    verbose = 0
-    if verbose == 1:
-        print 'starting plugin_listandedit.dupAndEdit ******************'
-
     tablename = request.args[0]
     rowid = request.args[1]
     orderby = request.vars['orderby'] or 'id'
@@ -219,30 +212,28 @@ def dupAndEdit():
     formname = '%s/%s/dup' % (tablename, rowid)
 
     src = db(db[tablename].id == rowid).select().first()
-    #print src
     form = SQLFORM(db[tablename], separator='', showid=True, formstyle='ul')
 
     for v in db[tablename].fields:
-        if v != 'id' and v in src:
-            form.vars[v] = src[v]
-            #TODO: somehow have the widget refreshed with the pre-populated
-            #value. maybe this would work by pre-creating a session value for
-            #the new form?
-            #somehow test to see if the field is AjaxSelect widget
-            #if so, set session value for field
-            wrappername = tablename + '_' + v + '_loader'
-            if verbose == 1:
-                print 'wrappername:', wrappername
-                print 'source record value:', src[v]
-            session[wrappername] = src[v]
+        # on opening populate duplicate values
+        form.vars[v] = src[v] if v != 'id' and v in src else None
+        # FIXME: ajaxselect field values have to be added manually
+        if db[tablename].fields[1] in request.vars.keys():  # on submit add ajaxselect values
+            extras = [f for f in db[tablename].fields
+                      if f not in form.vars.keys()]
+            for e in extras:
+                form.vars[e] = request.vars[e] if e in request.vars.keys() \
+                    else ''
+                #print 'adding field', e, ':', form.vars[e]
 
     if form.process(formname=formname).accepted:
         the_url = makeurl(tablename, orderby, restrictor)
         response.js = "web2py_component('%s', " \
-                                    "'listpane');" % the_url
+                      "'listpane');" % the_url
         response.flash = 'New record successfully created.'
     elif form.errors:
-        print form.vars
+        #print 'listandedit form errors:', [e for e in form.errors]
+        #print 'listandedit form vars:', form.vars
         response.flash = 'Sorry, there was an error processing '\
                          'the form. The new record has not been created.'
     else:
@@ -261,68 +252,77 @@ def edit():
             function of this controller, opening a form to insert a new record
             and pre-populating it with data copied from the current record.
     """
-    debug = True
+    #print '\n starting controllers/plugin_listandedit edit()'
 
-    if debug: print '\n starting controllers/plugin_listandedit edit()'
-
-    tablename = request.args[0]
-    orderby = request.vars['orderby'] or 'id'
-    restrictor = request.vars['restrictor'] or None
     duplink = ''
-    if len(request.args) > 1:
-        rowid = request.args[1]
-        formname = '%s/%s' % (tablename, rowid)
-        if debug: print 'formname: ', formname
+    if not request.args is None:
+        tablename = request.args[0]
+        orderby = request.vars['orderby'] or 'id'
+        restrictor = request.vars['restrictor'] or None
 
-        #TODO: Set value of "project" field programatically
-        form = SQLFORM(db[tablename], rowid, separator='',
+        if len(request.args) > 1:  # editing specific item
+            rowid = request.args[1]
+            formname = '%s/%s' % (tablename, rowid)
+            rargs = [db[tablename], rowid]
+
+            # create a link for adding a new row to the table
+            duplink = A('Make a copy of this record',
+                        _href=URL('plugin_listandedit',
+                                'dupAndEdit.load',
+                                args=[tablename, rowid],
+                                vars=request.vars),
+                        _class='plugin_listandedit_duplicate', cid='viewpane')
+
+        elif len(request.args) == 1:  # creating new item
+            formname = '%s/create' % (tablename)
+            rargs = [db[tablename]]
+
+        print request.args
+        print rargs
+        form = SQLFORM(*rargs, separator='',
                 deletable=True,
                 showid=True,
                 formstyle='ul')
+
+        # FIXME: ajaxselect field values have to be added manually
+        # FIXME: this check will fail if ajaxselect widget is for field indx[1]
+        if db[tablename].fields[1] in request.vars.keys():
+            extras = [f for f in db[tablename].fields
+                      if f not in form.vars.keys()]
+            for e in extras:
+                form.vars[e] = request.vars[e] if e in request.vars.keys() \
+                    else ''
+                print 'adding field', e, ':', form.vars[e]
+            if 'id' in form.vars.keys() and form.vars['id'] in (None, ''):
+                del(form.vars['id'])
+        else:
+            pass
+
         if form.process(formname=formname).accepted:
             the_url = makeurl(tablename, orderby, restrictor)
-            response.js = "web2py_component('%s', " \
-                                    "'listpane');" % the_url
+            response.js = "window.setTimeout(" \
+                          "web2py_component('{}', " \
+                          "'listpane'), 500);".format(the_url)
             response.flash = 'The changes were recorded successfully.'
-            if debug: print "submitted form vars", form.vars
+            print '\n\nform processed'
+            print "listandedit submitted form vars:", form.vars
         elif form.errors:
-            print form.errors
+            print '\n\nlistandedit form errors:'
+            pprint({k: v for k, v in form.errors.iteritems()})
+            print '\n\nlistandedit form vars'
+            pprint({k: v for k, v in form.vars.iteritems()})
+            print '\n\nlistandedit request vars'
+            pprint({k: v for k, v in request.vars.iteritems()})
             response.flash = 'Sorry, there was an error processing ' \
                              'the form. The changes have not been recorded.'
 
         else:
-            #TODO: Why is this line being run when a record is first selected?
-            print form.vars
-            pass
-
-        # create a link for adding a new row to the table
-        duplink = A('Make a copy of this record',
-                    _href=URL('plugin_listandedit',
-                                'dupAndEdit.load',
-                                args=[tablename, rowid],
-                                vars=request.vars),
-                    _class='plugin_listandedit_duplicate', cid='viewpane')
-
-    elif len(request.args) == 1:
-        formname = '%s/create' % (tablename)
-
-        form = SQLFORM(db[tablename], separator='',
-                        showid=True,
-                        formstyle='ul')
-        if form.process(formname=formname).accepted:
-            the_url = makeurl(tablename, orderby, restrictor)
-            response.js = "web2py_component('%s', 'listpane');" % the_url
-            response.flash = 'New record successfully created.'
-            if debug: print "submitted form vars", form.vars
-        elif form.errors:
-            print form.vars
-            response.flash = 'Sorry, there was an error processing '\
-                             'the form. The new record has not been created.'
-        else:
+            print '\n\nno errors but form not processed:', form.vars
             pass
 
     else:
         response.flash = 'Sorry, you need to specify a type of record before' \
-                'I can list the records.'
+                         'I can list the records.'
+        form = None
 
-    return dict(form=form, duplink=duplink)
+    return {form: form, duplink: duplink}
