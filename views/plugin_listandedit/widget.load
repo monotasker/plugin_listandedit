@@ -1,35 +1,41 @@
-<div class="list_control">
-    <h2>
-        <span class='table'>{{=request.args[0].capitalize()}}</span> 
-        <span class='restrictor'>restricted by {{=rname}}</span>
-    </h2>
-    {{=SPAN(str(len(listset)) + ' in total', _class='list_count')}}{{=adder}}
+
+<div class="row-fluid">
+    <div class="list_control span12">
+        <h2>
+            <span class='table'>{{=request.args[0].capitalize()}}</span> 
+            <span class='restrictor'>restricted by {{=rname}}</span>
+        </h2>
+        {{=SPAN(str(len(listset)) + ' in total', _class='list_count')}}{{=adder}}
+    </div>
 </div>
 
-<section id="viewpane">
-{{if len(request.args) > 1:}}
-{{=LOAD('plugin_listandedit', 'edit.load',
-        args=request.args,
-        vars=request.vars, 
-        ajax=True, ajax_trap=True)}}
-{{else:}}
-    Please select an item from the list.
-{{pass}}
+<div class='row-fluid'>
 
-</section>
+    <div id="listpane" class="span4">
+    <!--  <form>
+            <input type='text' id='restrictor_field' />
+            <select id='restrictor_value'>
+                {{#for o in optset:}}
+                <option value='{{#=o}}'></option>
+                {{#pass}}
+            </select>
+        </form> -->
+        <ul class='list-group nav nav-stacked nav-tabs'>
+            {{for l in listset:}}
+            <li class='list-group-item'>{{=l}}</li>
+            {{pass}}
+        </ul>
+    </div>
 
-<section id="listpane">
-   <!--  <form>
-        <input type='text' id='restrictor_field' />
-        <select id='restrictor_value'>
-            {{#for o in optset:}}
-            <option value='{{#=o}}'></option>
-            {{#pass}}
-        </select>
-    </form> -->
-    <ul class='list-group'>
-        {{for l in listset:}}
-        <li class='list-group-item'>{{=l}}</li>
-        {{pass}}
-    </ul>
-</section>
+    <div id="viewpane" class="span6 well">
+    {{if len(request.args) > 1:}}
+    {{=LOAD('plugin_listandedit', 'edit.load',
+            args=request.args,
+            vars=request.vars, 
+            ajax=True, ajax_trap=True)}}
+    {{else:}}
+        Please select an item from the list.
+    {{pass}}
+
+    </div>
+</div> <!--end of row-->
