@@ -1,4 +1,4 @@
-    <ul>
+    <ul class='nav nav-tabs nav-stacked'>
         {{for l in listset:}}
         <li>{{=l}}</li>
         {{pass}}

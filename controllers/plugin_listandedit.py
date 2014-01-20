@@ -179,7 +179,7 @@ def widget():
         i = A(listformat, _href=URL('plugin_listandedit', 'edit.load',
                                     args=[tablename, r.id],
                                     vars=vardict),
-              _class='plugin_listandedit_addnew',
+              _class='plugin_listandedit_list',
               cid='viewpane')
         listset.append(i)
 

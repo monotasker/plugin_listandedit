@@ -8,7 +8,7 @@
 @col3: desaturate(lighten(@accent2, 15%), 35%);
 @col4: desaturate(lighten(@accent1, 5%), 35%);
 
-#listpane                          {height:600px;
+#listpane                    {height:600px;
                                     overflow:auto;
                                     position:relative;
 }
@@ -28,15 +28,13 @@
                                     margin-right:0;
     }
 }
-#viewpane                          {.pull-right;
-                                    overflow:auto;
-                                    width: 65%;
+#viewpane                          {overflow:auto;
                                     height: 600px;
                                     position:relative;
     form                           {margin: 0; 
                                     padding: 0;
-        div.w2p_fw                 {display:block;}
-        textarea                   {width: 90%;}
+        /*div.w2p_fw                 {display:block;}*/
+        /*textarea                   {width: 90%;}*/
     }
     .plugin_listandedit_duplicate  {position:absolute;
                                     display:block;
@@ -47,31 +45,28 @@
 
 /**base theme - depends on mixins and vars from plugin_framework**/
 
-#listpane                          {background-color: @col1;  // 
-                                    border:1px solid darken(@col1, 10%); 
+/*#listpane                          {*/
+    /*ul                             {padding-left:0;*/
+        /*li                         {background-color: @col1;*/
+                                    /*[>background-image:-moz-linear-gradient(#f5f5f5, #eee);<]*/
+                                    /*[>background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#f5f5f5), to(#eee));<]*/
+                                    /*[>background-image:-o-linear-gradient(#f5f5f5, #eee);<]*/
+                                    /*[>background-image:-ms-linear-gradient(#f5f5f5, #eee);<]*/
+                                    /*border-bottom: 1px solid @col2;*/
+                                    /*border-top:1px solid @col0;*/
+            /*a,*/
+            /*a:link,*/
+            /*a:visited              {color:@col4;}*/
 
-    ul                             {padding-left:0;
+            /*&:hover                    {background-color:@col0;*/
+                                        /*background-image:none;*/
+                /*a                      {color:darken(@col4, 10%);}*/
+                /*}*/
+            /*}*/
+        /*}*/
+    /*}*/
 
-        li                         {background-color: @col1;
-                                    /*background-image:-moz-linear-gradient(#f5f5f5, #eee);*/
-                                    /*background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#f5f5f5), to(#eee));*/
-                                    /*background-image:-o-linear-gradient(#f5f5f5, #eee);*/
-                                    /*background-image:-ms-linear-gradient(#f5f5f5, #eee);*/
-                                    border-bottom: 1px solid @col2;
-                                    border-top:1px solid @col0;
-            a,
-            a:link,
-            a:visited              {color:@col4;}
-
-            &:hover                    {background-color:@col0;
-                                        background-image:none;
-                a                      {color:darken(@col4, 10%);}
-                }
-            }
-        }
-    }
-
-#viewpane                          {background: transparent;
+#viewpane                          {
     label                          {color:@col2;}
     form                           {}
     .plugin_listandedit_duplicate  {background-color:@col3;
@@ -90,12 +85,9 @@
                                     border-left:1px solid @col3;
                                     height:(@baseLineHeight * 1.5);
 
-    h2                             {font-weight:normal;
-                                    color:@col0;
+    h2                             {color:@col0;
                                     line-height: (@baseLineHeight * 1.5);
                                     height: (@baseLineHeight * 1.5);
-                                    font-size:@baseFontSize * 1.5;
-                                    .text-shadow(0,0,3px, rgba(0,0,0,0.1));
         .restrictor                {font-size:@baseFontSize;
                                     line-height: (@baseLineHeight * 1.5);
                                     height: (@baseLineHeight * 1.5);}

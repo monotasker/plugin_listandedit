@@ -27,7 +27,7 @@
         </ul>
     </div>
 
-    <div id="viewpane" class="span6 well">
+    <div id="viewpane" class="span8">
     {{if len(request.args) > 1:}}
     {{=LOAD('plugin_listandedit', 'edit.load',
             args=request.args,

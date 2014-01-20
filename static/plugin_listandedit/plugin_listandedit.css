@@ -1069,6 +1069,33 @@ td.w2p_fw ul {
 /* ocp - text on latte */
 /*google black*/
 /*@blueDark:              #0064cd;*/
+.clearfix {
+  *zoom: 1;
+}
+.clearfix:before,
+.clearfix:after {
+  display: table;
+  content: "";
+  line-height: 0;
+}
+.clearfix:after {
+  clear: both;
+}
+.hide-text {
+  font: 0/0 a;
+  color: transparent;
+  text-shadow: none;
+  background-color: transparent;
+  border: 0;
+}
+.input-block-level {
+  display: block;
+  width: 100%;
+  min-height: 34px;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+}
 article,
 aside,
 details,
@@ -2510,7 +2537,7 @@ select:focus:invalid:focus {
   padding: 23px 20px 24px;
   margin-top: 24px;
   margin-bottom: 24px;
-  background-color: #b98233;
+  background-color: #ffffff;
   border-top: 1px solid #e5e5e5;
   *zoom: 1;
 }
@@ -4642,15 +4669,15 @@ input[type="submit"].btn.btn-mini {
   min-height: 48px;
   padding-left: 20px;
   padding-right: 20px;
-  background-color: #ad7a30;
-  background-image: -moz-linear-gradient(top, #bd8534, #956929);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#bd8534), to(#956929));
-  background-image: -webkit-linear-gradient(top, #bd8534, #956929);
-  background-image: -o-linear-gradient(top, #bd8534, #956929);
-  background-image: linear-gradient(to bottom, #bd8534, #956929);
+  background-color: #f9f9f9;
+  background-image: -moz-linear-gradient(top, #ffffff, #efefef);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#efefef));
+  background-image: -webkit-linear-gradient(top, #ffffff, #efefef);
+  background-image: -o-linear-gradient(top, #ffffff, #efefef);
+  background-image: linear-gradient(to bottom, #ffffff, #efefef);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffbd8534', endColorstr='#ff956929', GradientType=0);
-  border: 1px solid #65471c;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#ffefefef', GradientType=0);
+  border: 1px solid #d0d0d0;
   -webkit-border-radius: 0px;
   -moz-border-radius: 0px;
   border-radius: 0px;
@@ -4693,7 +4720,7 @@ input[type="submit"].btn.btn-mini {
   font-size: 20px;
   font-weight: 200;
   color: #ffffff;
-  text-shadow: 0 1px 0 #bd8534;
+  text-shadow: 0 1px 0 #ffffff;
 }
 .navbar .brand:hover,
 .navbar .brand:focus {
@@ -4714,8 +4741,8 @@ input[type="submit"].btn.btn-mini {
 .navbar .divider-vertical {
   height: 48px;
   margin: 0 9px;
-  border-left: 1px solid #956929;
-  border-right: 1px solid #bd8534;
+  border-left: 1px solid #efefef;
+  border-right: 1px solid #ffffff;
 }
 .navbar .btn,
 .navbar .btn-group {
@@ -4882,7 +4909,7 @@ input[type="submit"].btn.btn-mini {
   padding: 12px 15px 12px;
   color: #a09552;
   text-decoration: none;
-  text-shadow: 0 1px 0 #bd8534;
+  text-shadow: 0 1px 0 #ffffff;
 }
 .navbar .nav .dropdown-toggle .caret {
   margin-top: 8px;
@@ -4916,17 +4943,17 @@ input[type="submit"].btn.btn-mini {
   margin-right: 5px;
   color: #ffffff;
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25);
-  background-color: #996c2a;
-  background-image: -moz-linear-gradient(top, #a9772f, #815b23);
-  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#a9772f), to(#815b23));
-  background-image: -webkit-linear-gradient(top, #a9772f, #815b23);
-  background-image: -o-linear-gradient(top, #a9772f, #815b23);
-  background-image: linear-gradient(to bottom, #a9772f, #815b23);
+  background-color: #ececec;
+  background-image: -moz-linear-gradient(top, #f2f2f2, #e2e2e2);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#f2f2f2), to(#e2e2e2));
+  background-image: -webkit-linear-gradient(top, #f2f2f2, #e2e2e2);
+  background-image: -o-linear-gradient(top, #f2f2f2, #e2e2e2);
+  background-image: linear-gradient(to bottom, #f2f2f2, #e2e2e2);
   background-repeat: repeat-x;
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffa9772f', endColorstr='#ff815b23', GradientType=0);
-  border-color: #815b23 #815b23 #453113;
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#fff2f2f2', endColorstr='#ffe2e2e2', GradientType=0);
+  border-color: #e2e2e2 #e2e2e2 #bcbcbc;
   border-color: rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-  *background-color: #815b23;
+  *background-color: #e2e2e2;
   /* Darken IE7 buttons by default so they stand out more given they won't have borders */
   filter: progid:DXImageTransform.Microsoft.gradient(enabled = false);
   -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(255,255,255,.075);
@@ -4945,12 +4972,12 @@ input[type="submit"].btn.btn-mini {
 .navbar .btn-navbar.disabled,
 .navbar .btn-navbar[disabled] {
   color: #ffffff;
-  background-color: #815b23;
-  *background-color: #6d4d1e;
+  background-color: #e2e2e2;
+  *background-color: #d5d5d5;
 }
 .navbar .btn-navbar:active,
 .navbar .btn-navbar.active {
-  background-color: #593f18 \9;
+  background-color: #c9c9c9 \9;
 }
 .navbar .btn-navbar .icon-bar {
   display: block;
@@ -6416,73 +6443,6 @@ a.badge:focus {
  *
  * Designed and built with all the love in the world @twitter by @mdo and @fat.
  */
-/* colours for my reusable UI framework */
-/* Ian W Scott */
-/* public domain */
-/* solarized */
-/* paideia */
-/* ubuntu */
-/* ocp */
-/* ocp - book title */
-/* ocp -- text headings on white or on mud; edition label */
-/* ocp - not in active use */
-/* ocp - not in active use */
-/* ocp - read text link on intro pages; maybe headings on white? */
-/* ocp - footer and top of header gradient */
-/* ocp - bottom of header gradient */
-/* ocp - accent with chalk, table lines */
-/* ocp - sidebars and control buttons */
-/* ocp */
-/* ocp */
-/* ocp - text on latte */
-/* yellows */
-/* ocp - book title */
-/* greens */
-/* paideia */
-/* blues */
-/* ocp - not in active use */
-/* ocp - read text link on intro pages; maybe headings on white? */
-/* ubuntu */
-/* ocp - not in active use */
-/* ocp - footer and top of header gradient */
-/* ocp - bottom of header gradient */
-/* ocp - table cell background */
-/* paideia */
-/* paideia */
-/* ocp - accent with chalk, table lines */
-/* ocp - sidebars and control buttons */
-/* ocp */
-/* ocp */
-/*google light background*/
-/* ocp - text on latte */
-/*google black*/
-.clearfix {
-  *zoom: 1;
-}
-.clearfix:before,
-.clearfix:after {
-  display: table;
-  content: "";
-  line-height: 0;
-}
-.clearfix:after {
-  clear: both;
-}
-.hide-text {
-  font: 0/0 a;
-  color: transparent;
-  text-shadow: none;
-  background-color: transparent;
-  border: 0;
-}
-.input-block-level {
-  display: block;
-  width: 100%;
-  min-height: 34px;
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-}
 @-ms-viewport {
   width: device-width;
 }
@@ -7458,7 +7418,7 @@ a.badge:focus {
   .nav-collapse .nav > li > a:focus,
   .nav-collapse .dropdown-menu a:hover,
   .nav-collapse .dropdown-menu a:focus {
-    background-color: #956929;
+    background-color: #efefef;
   }
   .navbar-inverse .nav-collapse .nav > li > a,
   .navbar-inverse .nav-collapse .dropdown-menu a {
@@ -7521,8 +7481,8 @@ a.badge:focus {
     float: none;
     padding: 12px 15px;
     margin: 12px 0;
-    border-top: 1px solid #956929;
-    border-bottom: 1px solid #956929;
+    border-top: 1px solid #efefef;
+    border-bottom: 1px solid #efefef;
     -webkit-box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(255,255,255,.1);
     -moz-box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(255,255,255,.1);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 1px 0 rgba(255,255,255,.1);
@@ -9555,21 +9515,15 @@ a:link {
   margin-right: 0;
 }
 #viewpane {
-  float: right;
   overflow: auto;
-  width: 65%;
   height: 600px;
   position: relative;
 }
 #viewpane form {
   margin: 0;
   padding: 0;
-}
-#viewpane form div.w2p_fw {
-  display: block;
-}
-#viewpane form textarea {
-  width: 90%;
+  /*div.w2p_fw                 {display:block;}*/
+  /*textarea                   {width: 90%;}*/
 }
 #viewpane .plugin_listandedit_duplicate {
   position: absolute;
@@ -9578,37 +9532,25 @@ a:link {
   top: 0;
 }
 /**base theme - depends on mixins and vars from plugin_framework**/
-#listpane {
-  background-color: #f2f0e6;
-  border: 1px solid #e1ddc4;
-}
-#listpane ul {
-  padding-left: 0;
-}
-#listpane ul li {
-  background-color: #f2f0e6;
-  /*background-image:-moz-linear-gradient(#f5f5f5, #eee);*/
-  /*background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#f5f5f5), to(#eee));*/
-  /*background-image:-o-linear-gradient(#f5f5f5, #eee);*/
-  /*background-image:-ms-linear-gradient(#f5f5f5, #eee);*/
-  border-bottom: 1px solid #d8d3b3;
-  border-top: 1px solid #ffffff;
-}
-#listpane ul li a,
-#listpane ul li a:link,
-#listpane ul li a:visited {
-  color: #8e4b46;
-}
-#listpane ul li:hover {
-  background-color: #ffffff;
-  background-image: none;
-}
-#listpane ul li:hover a {
-  color: #6b3935;
-}
-#viewpane {
-  background: transparent;
-}
+/*#listpane                          {*/
+/*ul                             {padding-left:0;*/
+/*li                         {background-color: @col1;*/
+/*[>background-image:-moz-linear-gradient(#f5f5f5, #eee);<]*/
+/*[>background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#f5f5f5), to(#eee));<]*/
+/*[>background-image:-o-linear-gradient(#f5f5f5, #eee);<]*/
+/*[>background-image:-ms-linear-gradient(#f5f5f5, #eee);<]*/
+/*border-bottom: 1px solid @col2;*/
+/*border-top:1px solid @col0;*/
+/*a,*/
+/*a:link,*/
+/*a:visited              {color:@col4;}*/
+/*&:hover                    {background-color:@col0;*/
+/*background-image:none;*/
+/*a                      {color:darken(@col4, 10%);}*/
+/*}*/
+/*}*/
+/*}*/
+/*}*/
 #viewpane label {
   color: #d8d3b3;
 }
@@ -9635,16 +9577,9 @@ a:link {
   height: 36px;
 }
 #page .list_control h2 {
-  font-weight: normal;
   color: #ffffff;
   line-height: 36px;
   height: 36px;
-  font-size: 24px;
-  -moz-text-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-  -webkit-text-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-  -o-text-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-  -ms-text-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
-  text-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
 }
 #page .list_control h2 .restrictor {
   font-size: 16px;
