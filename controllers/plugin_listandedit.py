@@ -121,15 +121,16 @@ def widget():
     fields when generating the list.
     """
     tablename = request.args[0]
+    rowlist = []
     orderby = 'id'
     try:
         if 'orderby' in request.vars:
-            orderby = request.vars['orderby']
+            orderby = request.vars['orderby'].split('|')
     except ValueError:
         pass
 
     #pass that name on to be used as a title for the widget
-    rname = tablename + ' (' + orderby + ')'
+    rname = '{} ({})'.format(tablename, '|'.join(orderby))
 
     #get filtering values if any
     if 'restrictor' in request.vars:
@@ -145,16 +146,16 @@ def widget():
         entries from a table that does not exist in the database.'''
     else:
         tb = db[tablename]
-        #select all rows in the table
-
-        #filter that set based on any provided field-value pairs in
-        #request.vars.restrictor
         if restrictor:
             for k, v in restrictor.items():
                 filter_select = db(tb[k] == v)._select(tb.id)
                 rowlist = db(tb.id.belongs(filter_select)).select()
         else:
-            rowlist = db().select(tb.ALL, orderby=~tb[orderby])
+            if isinstance(orderby, list):
+                orderby = tb[orderby[0]]
+            else:
+                orderby = tb[orderby]
+            rowlist = db().select(tb.ALL, orderby=~orderby)
 
     # build html list from the selected rows
     listset = []
