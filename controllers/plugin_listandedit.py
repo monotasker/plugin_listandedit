@@ -120,6 +120,8 @@ def widget():
     of fields in the table and the values are the values to be allowed in those
     fields when generating the list.
     """
+    response.files.append(URL('static',
+                              'plugin_listandedit/plugin_listandedit.js'))
     tablename = request.args[0]
     rowlist = []
     orderby = 'id'
