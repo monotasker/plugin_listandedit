@@ -8,6 +8,7 @@ if 0:
     request = current.request
     db = current.db
     session = current.session
+from plugin_utils import islist
 
 
 def itemlist():
@@ -120,8 +121,10 @@ def widget():
     of fields in the table and the values are the values to be allowed in those
     fields when generating the list.
     """
-    response.files.append(URL('static',
-                              'plugin_listandedit/plugin_listandedit.js'))
+    # TODO: not clear whether appending file here works after page load
+    # I think I would have to append file in the parent view.
+    #response.files.append(URL('static',
+                              #'plugin_listandedit/plugin_listandedit.js'))
     tablename = request.args[0]
     rowlist = []
     orderby = 'id'
@@ -132,7 +135,7 @@ def widget():
         pass
 
     #pass that name on to be used as a title for the widget
-    rname = '{} ({})'.format(tablename, '|'.join(orderby))
+    rname = '{} ({})'.format(tablename, '|'.join(islist(orderby)))
 
     #get filtering values if any
     if 'restrictor' in request.vars:
