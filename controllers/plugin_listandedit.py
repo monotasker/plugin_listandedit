@@ -44,7 +44,6 @@ def itemlist():
             orderby = request.vars['orderby']
     except ValueError:
         pass
-    print 'itemlist: orderby is', orderby
 
     #get filtering values if any
     if 'restrictor' in request.vars:
@@ -131,7 +130,6 @@ def widget():
             orderby = request.vars['orderby'].split('|')
     except ValueError:
         pass
-    print 'widget: orderby is', orderby
 
     #pass that name on to be used as a title for the widget
     rname = '{} ({})'.format(tablename, '|'.join(islist(orderby)))
@@ -160,12 +158,10 @@ def widget():
             else:
                 orderby = orderby
             rowlist = db().select(tb.ALL, orderby=~tb[orderby])
-    print 'widget: orderby is', orderby
 
     # build html list from the selected rows
     listset = []
     for r in rowlist:
-        print 'widget rowlist: orderby is', orderby
         fieldname = db[tablename].fields[1]
         # use format string from db table definition to list entries (if
         #available)
@@ -182,7 +178,6 @@ def widget():
         vardict.update(request.vars)
         if not restrictor is None:
             vardict['restrictor'] = restrictor
-        print 'widget: orderby is', orderby
 
         i = A(listformat, _href=URL('plugin_listandedit', 'edit.load',
                                     args=[tablename, r.id],
@@ -204,7 +199,6 @@ def widget():
 
 def makeurl(tablename, orderby, restrictor):
     rdict = {'orderby': orderby}
-    print 'makeurl: orderby is', orderby
     if not restrictor is None:
         rdict['restrictor'] = restrictor
     the_url = URL('plugin_listandedit', 'itemlist.load',
@@ -234,7 +228,6 @@ def dupAndEdit():
             for e in extras:
                 form.vars[e] = request.vars[e] if e in request.vars.keys() \
                     else ''
-                #print 'adding field', e, ':', form.vars[e]
 
     if form.process(formname=formname).accepted:
         the_url = makeurl(tablename, orderby, restrictor)
@@ -262,8 +255,6 @@ def edit():
             function of this controller, opening a form to insert a new record
             and pre-populating it with data copied from the current record.
     """
-    #print '\n starting controllers/plugin_listandedit edit()'
-
     duplink = ''
     if not request.args is None:
         tablename = request.args[0]
@@ -271,7 +262,6 @@ def edit():
                   in request.vars.keys() else 'id'
         restrictor = request.vars['restrictor'] if 'restrictor' \
                      in request.vars.keys() else None
-        print 'edit: orderby is', orderby
 
         if len(request.args) > 1:  # editing specific item
             rowid = request.args[1]
@@ -290,8 +280,6 @@ def edit():
             formname = '%s/create' % (tablename)
             rargs = [db[tablename]]
 
-        #print request.args
-        #print rargs
         form = SQLFORM(*rargs, separator='',
                 deletable=True,
                 showid=True,
@@ -305,7 +293,6 @@ def edit():
             for e in extras:
                 form.vars[e] = request.vars[e] if e in request.vars.keys() \
                     else ''
-                #print 'adding field', e, ':', form.vars[e]
             if 'id' in form.vars.keys() and form.vars['id'] in (None, ''):
                 del(form.vars['id'])
         else:
@@ -317,8 +304,6 @@ def edit():
                           "web2py_component('{}', " \
                           "'listpane'), 500);".format(the_url)
             response.flash = 'The changes were recorded successfully.'
-            #print '\n\nform processed'
-            #print "listandedit submitted form vars:", form.vars
         elif form.errors:
             print '\n\nlistandedit form errors:'
             pprint({k: v for k, v in form.errors.iteritems()})
