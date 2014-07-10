@@ -1,27 +1,34 @@
 /* plugin_listandedit */
 
-@import "../../../plugin_framework/static/plugin_framework/css/framework.less";
+/*@import "../../../plugin_framework/static/plugin_framework/css/framework.less";*/
 
-@col0: lighten(@pallette2, 50%); // #f5f5f5
-@col1: lighten(@pallette2, 15%);  // #eee
-@col2: @pallette2;  // #ccc
-@col3: desaturate(lighten(@accent2, 15%), 35%);
-@col4: desaturate(lighten(@accent1, 5%), 35%);
+@baseLineHeight:21px;
+@baseFontSize: 16px;
+@fontSizeSmall: 12px;
+@fontSizeLarge: 18px;
+@col0: #f5f5f5;
+@col1: #eee;
+@col2: #ccc;
+@col3: blue;
+@col4: red;
 
-#listpane                    {height:600px;
-                                    overflow:auto;
-                                    position:relative;
+#listpane                           {height:600px;
+                                     overflow:auto;
+                                     position:relative;
+                                     padding-right: 0;
+    .list-group-item                {padding: 0;
+    }
 }
 
 #page .list_control                {padding:0;
-    h2                             { .text-shadow(0,0,3px, rgba(0,0,0,0.1));
+    h2                             { //.text-shadow(0,0,3px, rgba(0,0,0,0.1));
                                     display: inline-block;
                                     margin-right:@baseLineHeight;
                                     margin-left:@baseLineHeight;
                                     margin-top:0;
                                     display:inline-block;
     }
-    a                              {.pull-right;
+    a                              {float:right;
                                     display:block;
                                     text-decoration:none;
                                     padding:0;
@@ -70,11 +77,11 @@
     label                          {color:@col2;}
     form                           {}
     .plugin_listandedit_duplicate  {background-color:@col3;
-                                    color:@white;
+                                    color:@col0;
                                     padding:0.25em 1em;
                                     font-size:@fontSizeSmall;
         &:hover                    {background-color:darken(@col3, 10%);
-                                    .transition();}
+                                    transition: 200ms all linear}
     }
 }
 
@@ -91,18 +98,17 @@
         .restrictor                {font-size:@baseFontSize;
                                     line-height: (@baseLineHeight * 1.5);
                                     height: (@baseLineHeight * 1.5);}
-        .list_count                {color:@white;}
+        .list_count                {color:@col0;}
     }
     a                              {float:right;
-                                    color:@white;
+                                    color:@col0;
                                     text-align:center;
                                     line-height: (@baseLineHeight * 1.5);
                                     height: (@baseLineHeight * 1.5);
                                     width: (@baseLineHeight * 1.5);
                                     font-size:@fontSizeLarge;
                                     text-decoration:none;
-                                    .border-radius(0);
-        &:hover                    {color:@white;}
+        &:hover                    {color:@col0;}
     }
 }
 

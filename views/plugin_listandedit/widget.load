@@ -1,17 +1,20 @@
 
-<div class="row-fluid">
-    <div class="list_control span12">
+<div class="row">
+    <div class="container-fluid">
+    <div class="list_control col-xs-12">
         <h2>
             <span class='table'>{{=request.args[0].capitalize()}}</span>
             <span class='restrictor'>restricted by {{=rname}}</span>
         </h2>
         {{=SPAN(str(len(listset)) + ' in total', _class='list_count')}}{{=adder}}
     </div>
+    </div>
 </div>
 
-<div class='row-fluid'>
+<div class='row'>
+    <div class="container-fluid">
 
-    <div id="listpane" class="span4">
+    <div id="listpane" class="col-xs-4">
     <!--  <form>
             <input type='text' id='restrictor_field' />
             <select id='restrictor_value'>
@@ -20,14 +23,14 @@
                 {{#pass}}
             </select>
         </form> -->
-        <ul class='list-group nav nav-stacked nav-tabs'>
+        <ul class='list-group'>
             {{for l in listset:}}
             <li class='list-group-item'>{{=l}}</li>
             {{pass}}
         </ul>
     </div>
 
-    <div id="viewpane" class="span8">
+    <div id="viewpane" class="col-xs-8">
     {{if len(request.args) > 1:}}
     {{=LOAD('plugin_listandedit', 'edit.load',
             args=request.args,
@@ -38,34 +41,24 @@
     {{pass}}
 
     </div>
+    </div> <!--end of container-->
 </div> <!--end of row-->
 
 
 <script>
 /* TODO: improve this if condition to be more specific to widget */
-if($('#main').hasClass('listing') || $('#main').hasClass('editing')){
-    /* set listpane height to optimal */
-    /* if pane heights are wrong, change the value of the heightadjust variable to tweak it */
-    var heightadjust = 48;
-    var lpos = $('#listpane').offset();
-    var vpos = $('#viewpane').offset();
-    var listtop = lpos.top;
-    var viewtop = vpos.top;
+if($('body').hasClass('listing') || $('body').hasClass('editing')){
+    var heightadjust = 32;  // for nav
     var winheight = $(window).height();
-    /* I'm using the html5 footer element here, to use standard id just change 'footer' to '#footer' */
-    var headheight = $('#header').height();
-    var navheight = $('#list_control').height();
-    var footheight = $('#footer').height();
-    var listheight = winheight - footheight - headheight - heightadjust - navheight;
-    var viewheight = winheight - footheight - headheight - heightadjust - navheight;
-    $('#listpane').css('height', listheight);
-    $('#viewpane').css('height', viewheight);
+    var headheight = $('.navbar').outerHeight();
+    console.log('winheight' + headheight);
+    var navheight = $('#list_control').outerHeight();
+  // var footheight = $('#footer').height();
+    var listheight = winheight - headheight - heightadjust - navheight;  // - footheight
+    $('#listpane, #viewpane').css('height', listheight);
 
-    /* make sure pane heights resize properly when window resizes */
     $(window).on('resize', function(){
-        $('#listpane').css('height', listheight);
-        $('#viewpane').css('height', viewheight);
+        $('#listpane, #viewpane').css('height', listheight);
     });
 }
-});
 </script>

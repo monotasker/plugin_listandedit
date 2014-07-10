@@ -10,6 +10,7 @@ if 0:
     session = current.session
 from plugin_utils import islist
 
+response.files.append(URL('static', 'css/plugin_listandedit.css'))
 
 def itemlist():
     """
@@ -82,11 +83,12 @@ def itemlist():
         else:
             listformat = r[fieldname]
 
-        vardict = {'tablename': tablename}
-        if not vardict is None:
+        vardict = {'tablename': tablename,
+                   'orderby': orderby}
+        if vardict:
             vardict['restrictor'] = restrictor
 
-        i = A(listformat, _href=URL('plugin_listandedit', 'edit.load',
+        i = A(listformat, callback=URL('plugin_listandedit', 'edit.load',
                                     args=[tablename, r.id],
                                     vars=vardict),
               _class='plugin_listandedit_list',
