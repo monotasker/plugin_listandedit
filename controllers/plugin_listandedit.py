@@ -178,7 +178,7 @@ def widget():
         vardict = {'tablename': tablename,
                    'orderby': orderby}
         vardict.update(request.vars)
-        if not restrictor is None:
+        if restrictor:
             vardict['restrictor'] = restrictor
 
         i = A(listformat, _href=URL('plugin_listandedit', 'edit.load',

@@ -1,5 +1,5 @@
-    <ul class=''>
+    <ul class='list-group'>
         {{for l in listset:}}
-        <li>{{=l}}</li>
+        <li class='list-group-item'>{{=l}}</li>
         {{pass}}
     </ul>
