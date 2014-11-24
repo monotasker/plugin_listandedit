@@ -9,7 +9,7 @@ if 0:
     db = current.db
     session = current.session
 from plugin_utils import islist
-
+from gluon import redirect
 response.files.append(URL('static', 'css/plugin_listandedit.css'))
 
 def itemlist():
@@ -258,6 +258,7 @@ def edit():
             and pre-populating it with data copied from the current record.
     """
     duplink = ''
+    default_vars = {}
     if not request.args is None:
         tablename = request.args[0]
         orderby = request.vars['orderby'] if 'orderby' \
@@ -280,12 +281,16 @@ def edit():
 
         elif len(request.args) == 1:  # creating new item
             formname = '%s/create' % (tablename)
+            default_vars = {k:v for k,v in request.vars.iteritems() if hasattr(db[tablename],k)}
             rargs = [db[tablename]]
-
+            
         form = SQLFORM(*rargs, separator='',
                 deletable=True,
                 showid=True,
                 formstyle='ul')
+        print {'default_vars': default_vars}
+        #for k in default_vars: form.vars.setitem(k, default_vars[k])
+        for k in default_vars: form.vars[k] =  default_vars[k]
 
         # FIXME: ajaxselect field values have to be added manually
         # FIXME: this check will fail if ajaxselect widget is for field indx[1]
@@ -301,11 +306,15 @@ def edit():
             pass
 
         if form.process(formname=formname).accepted:
-            the_url = makeurl(tablename, orderby, restrictor)
-            response.js = "window.setTimeout(" \
-                          "web2py_component('{}', " \
-                          "'listpane'), 500);".format(the_url)
             response.flash = 'The changes were recorded successfully.'
+            if 'redirect' in request.vars and 'True' == request.vars['redirect']:
+                redirect(URL(request.vars['redirect_c'],request.vars['redirect_a']))
+            else:
+                the_url = makeurl(tablename, orderby, restrictor)
+                print {'the_url': the_url}
+                response.js = "window.setTimeout(" \
+                              "web2py_component('{}', " \
+                              "'listpane'), 500);".format(the_url)
         elif form.errors:
             print '\n\nlistandedit form errors:'
             pprint({k: v for k, v in form.errors.iteritems()})

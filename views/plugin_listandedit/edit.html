@@ -1,0 +1,40 @@
+{{#this is only good for the badges and steps table, you are looking for edit.load}}
+{{extend 'layout.html'}}
+{{
+from plugin_widgets import TOOLTIP, TABS, ROLE
+import json
+}}
+{{if ('badge_name' in request.vars):}}
+{{local_title='Create Badge for Tag "' + request.vars['badge_name'] + '" ('+ str(request.vars['tag'])+')'}}
+{{=UL(LI(EM(local_title)))}}
+{{pass}}
+
+{{if (request.vars.tablename == 'steps'):}}
+{{local_title='Edit Step '  + str(request.args[1])}}
+{{=UL(LI(EM(local_title)))}}
+{{pass}}
+
+
+
+{{vals = len(response._vars.values())
+for v in range(vals):
+    =response._vars.values()[v]
+pass}}
+
+<script>
+        $('ul.sortable').sortable({
+            placeholder: 'ui-state-highlight',
+            stop: function(event, ui){ 
+                var $taglist = $(event.target).find('li');
+                whenSortStops($taglist); 
+            } 
+        });
+        $('ul.sortable').disableSelection();
+
+
+var rm_masthead = function() {
+    var x = $('div#masthead').remove();
+};
+
+$(window).load(rm_masthead);
+</script>
