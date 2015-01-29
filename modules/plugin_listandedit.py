@@ -1,8 +1,7 @@
 from gluon import LOAD
 
 # CSS imported directly into framework.less
-#response.files.append(URL('static',
-            #'plugin_listandedit/plugin_listandedit.css'))
+# response.files.append(URL('static', 'plugin_listandedit/plugin_listandedit.css'))
 
 
 def plugin_listandedit():

@@ -1,16 +1,20 @@
+#! /usr/bin/python
 # coding: utf8
-import ast
-#import traceback
-from pprint import pprint
+
 if 0:
     from gluon import current, URL, SQLFORM, A
     response = current.response
     request = current.request
     db = current.db
     session = current.session
-from plugin_utils import islist
+import ast
+# import traceback
 from gluon import redirect
+from pprint import pprint
+from plugin_utils import islist
+
 response.files.append(URL('static', 'css/plugin_listandedit.css'))
+
 
 def itemlist():
     """
@@ -35,10 +39,10 @@ def itemlist():
     fields when generating the list.
     """
 
-    #get table to be listed
+    # get table to be listed
     tablename = request.args[0]
 
-    #allow ordering of list based on values in any field
+    # allow ordering of list based on values in any field
     orderby = 'id'
     try:
         if 'orderby' in request.vars:
@@ -46,7 +50,7 @@ def itemlist():
     except ValueError:
         pass
 
-    #get filtering values if any
+    # get filtering values if any
     if 'restrictor' in request.vars:
         restr = request.vars['restrictor']
         # convert the string from the URL to a python dictionary object
@@ -54,16 +58,16 @@ def itemlist():
     else:
         restrictor = None
 
-    #check to make sure the required argument names a table in the db
-    if not tablename in db.tables():
+    # check to make sure the required argument names a table in the db
+    if tablename not in db.tables():
         response.flash = '''Sorry, you are trying to list
         entries from a table that does not exist in the database.'''
     else:
         tb = db[tablename]
-        #select all rows in the table
+        # select all rows in the table
 
-        #filter that set based on any provided field-value pairs in
-        #request.vars.restrictor
+        # filter that set based on any provided field-value pairs in
+        # request.vars.restrictor
         if restrictor:
             for k, v in restrictor.items():
                 filter_select = db(tb[k] == v)._select(tb.id)
@@ -76,7 +80,7 @@ def itemlist():
     for r in rowlist:
         fieldname = db[tablename].fields[1]
         # use format string from db table definition to list entries (if
-        #available)
+        # available)
         fmt = db[tablename]._format
         if fmt:
             listformat = fmt(r) if callable(fmt) else fmt % r
@@ -122,8 +126,8 @@ def widget():
     """
     # TODO: not clear whether appending file here works after page load
     # I think I would have to append file in the parent view.
-    #response.files.append(URL('static',
-                              #'plugin_listandedit/plugin_listandedit.js'))
+    # response.files.append(URL('static',
+    # 'plugin_listandedit/plugin_listandedit.js'))
     tablename = request.args[0]
     rowlist = []
     orderby = 'id'
@@ -133,10 +137,10 @@ def widget():
     except ValueError:
         pass
 
-    #pass that name on to be used as a title for the widget
+    # pass that name on to be used as a title for the widget
     rname = '{} ({})'.format(tablename, '|'.join(islist(orderby)))
 
-    #get filtering values if any
+    # get filtering values if any
     if 'restrictor' in request.vars:
         restr = request.vars['restrictor']
         # convert the string from the URL to a python dictionary object
@@ -144,8 +148,8 @@ def widget():
     else:
         restrictor = None
 
-    #check to make sure the required argument names a table in the db
-    if not tablename in db.tables():
+    # check to make sure the required argument names a table in the db
+    if tablename not in db.tables():
         response.flash = '''Sorry, you are trying to list
         entries from a table that does not exist in the database.'''
     else:
@@ -166,7 +170,7 @@ def widget():
     for r in rowlist:
         fieldname = db[tablename].fields[1]
         # use format string from db table definition to list entries (if
-        #available)
+        # available)
         if db[tablename]._format:
             try:
                 listformat = db[tablename]._format % r
@@ -201,7 +205,7 @@ def widget():
 
 def makeurl(tablename, orderby, restrictor):
     rdict = {'orderby': orderby}
-    if not restrictor is None:
+    if restrictor is not None:
         rdict['restrictor'] = restrictor
     the_url = URL('plugin_listandedit', 'itemlist.load',
                   args=[tablename], vars=rdict)
@@ -223,6 +227,7 @@ def dupAndEdit():
     for v in db[tablename].fields:
         # on opening populate duplicate values
         form.vars[v] = src[v] if v != 'id' and v in src else None
+        pprint(form.vars)
         # FIXME: ajaxselect field values have to be added manually
         if db[tablename].fields[1] in request.vars.keys():  # on submit add ajaxselect values
             extras = [f for f in db[tablename].fields
@@ -259,7 +264,7 @@ def edit():
     """
     duplink = ''
     default_vars = {}
-    if not request.args is None:
+    if request.args is not None:
         tablename = request.args[0]
         orderby = request.vars['orderby'] if 'orderby' \
                   in request.vars.keys() else 'id'
@@ -281,16 +286,17 @@ def edit():
 
         elif len(request.args) == 1:  # creating new item
             formname = '%s/create' % (tablename)
-            default_vars = {k:v for k,v in request.vars.iteritems() if hasattr(db[tablename],k)}
+            default_vars = {k: v for k, v in request.vars.iteritems()
+                            if hasattr(db[tablename], k)}
             rargs = [db[tablename]]
-            
+
         form = SQLFORM(*rargs, separator='',
                 deletable=True,
                 showid=True,
                 formstyle='ul')
         print {'default_vars': default_vars}
-        #for k in default_vars: form.vars.setitem(k, default_vars[k])
-        for k in default_vars: form.vars[k] =  default_vars[k]
+        # for k in default_vars: form.vars.setitem(k, default_vars[k])
+        for k in default_vars: form.vars[k] = default_vars[k]
 
         # FIXME: ajaxselect field values have to be added manually
         # FIXME: this check will fail if ajaxselect widget is for field indx[1]
@@ -308,7 +314,7 @@ def edit():
         if form.process(formname=formname).accepted:
             response.flash = 'The changes were recorded successfully.'
             if 'redirect' in request.vars and 'True' == request.vars['redirect']:
-                redirect(URL(request.vars['redirect_c'],request.vars['redirect_a']))
+                redirect(URL(request.vars['redirect_c'], request.vars['redirect_a']))
             else:
                 the_url = makeurl(tablename, orderby, restrictor)
                 print {'the_url': the_url}
