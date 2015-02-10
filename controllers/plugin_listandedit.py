@@ -227,7 +227,6 @@ def dupAndEdit():
     for v in db[tablename].fields:
         # on opening populate duplicate values
         form.vars[v] = src[v] if v != 'id' and v in src else None
-        pprint(form.vars)
         # FIXME: ajaxselect field values have to be added manually
         if db[tablename].fields[1] in request.vars.keys():  # on submit add ajaxselect values
             extras = [f for f in db[tablename].fields
@@ -235,8 +234,13 @@ def dupAndEdit():
             for e in extras:
                 form.vars[e] = request.vars[e] if e in request.vars.keys() \
                     else ''
+    del form.vars['id']
+    print 'form vars ========================================='
+    pprint(form.vars)
 
     if form.process(formname=formname).accepted:
+        db.commit()
+        print 'accepted form ================================='
         the_url = makeurl(tablename, orderby, restrictor)
         response.js = "web2py_component('%s', " \
                       "'listpane');" % the_url
@@ -294,7 +298,7 @@ def edit():
                 deletable=True,
                 showid=True,
                 formstyle='ul')
-        print {'default_vars': default_vars}
+        # print {'default_vars': default_vars}
         # for k in default_vars: form.vars.setitem(k, default_vars[k])
         for k in default_vars: form.vars[k] = default_vars[k]
 
@@ -317,7 +321,7 @@ def edit():
                 redirect(URL(request.vars['redirect_c'], request.vars['redirect_a']))
             else:
                 the_url = makeurl(tablename, orderby, restrictor)
-                print {'the_url': the_url}
+                # print {'the_url': the_url}
                 response.js = "window.setTimeout(" \
                               "web2py_component('{}', " \
                               "'listpane'), 500);".format(the_url)
