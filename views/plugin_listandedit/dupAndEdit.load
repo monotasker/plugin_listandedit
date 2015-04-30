@@ -2,4 +2,5 @@
 {{vals = len(response._vars.values())
 for v in range(vals): 
     =response._vars.values()[v]
+    # TODO: have multiple select widgets populated properly
 pass}}

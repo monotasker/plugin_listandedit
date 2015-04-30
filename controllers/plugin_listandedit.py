@@ -39,43 +39,79 @@ def itemlist():
     fields when generating the list.
     """
 
-    # get table to be listed
-    tablename = request.args[0]
+    tablename, orderby, restrictor = _get_params(request.args, request.vars)
 
-    # allow ordering of list based on values in any field
-    orderby = 'id'
-    try:
-        if 'orderby' in request.vars:
-            orderby = request.vars['orderby']
-    except ValueError:
-        pass
+    rowlist = _get_rowlist(tablename, orderby, restrictor)
+    listset = _get_listitems(rowlist, tablename, orderby, restrictor)
 
-    # get filtering values if any
-    if 'restrictor' in request.vars:
-        restr = request.vars['restrictor']
-        # convert the string from the URL to a python dictionary object
-        restrictor = ast.literal_eval(restr)
-    else:
-        restrictor = None
+    return {'listset': listset}
 
+
+def _get_rowlist(tablename, orderby, restrictor):
+    """
+    Return a web2py rows object with the db rows for filtered list items.
+
+    """
+    rowlist = []
     # check to make sure the required argument names a table in the db
     if tablename not in db.tables():
         response.flash = '''Sorry, you are trying to list
         entries from a table that does not exist in the database.'''
     else:
         tb = db[tablename]
-        # select all rows in the table
-
-        # filter that set based on any provided field-value pairs in
-        # request.vars.restrictor
         if restrictor:
             for k, v in restrictor.items():
                 filter_select = db(tb[k] == v)._select(tb.id)
                 rowlist = db(tb.id.belongs(filter_select)).select()
         else:
+            if isinstance(orderby, list):
+                orderby = orderby[0]
+            else:
+                orderby = orderby
             rowlist = db().select(tb.ALL, orderby=~tb[orderby])
 
-    # build html list from the selected rows
+    return rowlist
+
+
+def _get_params(rargs, rvars):
+    """
+    Return the tablename, orderby and restrictor parameters for the list items.
+
+    rargs: A list of strings giving url arguments
+    rvars: A dictionary of url named parameters
+    """
+    # get table to be listed
+    tablename = rargs[0]
+
+    # allow ordering of list based on values in any field
+    orderby = 'id'
+    try:
+        if 'orderby' in request.vars:
+            orderby = rvars['orderby'].split('|')
+    except ValueError:
+        pass
+
+    # get filtering values if any
+    if 'restrictor' in request.vars:
+        restr = rvars['restrictor']
+        # convert the string from the URL to a python dictionary object
+        restrictor = ast.literal_eval(restr)
+    else:
+        restrictor = None
+
+    return tablename, orderby, restrictor
+
+
+def _get_listitems(rowlist, tablename, orderby, restrictor):
+    """
+    Build actual html list of links for listpane.
+
+    rowlist: web2py rows object containing db row data for list items
+    tablename: string giving name of the db table to which the items belong
+    orderby: string giving name of the field on which to order items
+    restrictor: dict of fieldnames and allowed values to use for filtering items
+
+    """
     listset = []
     for r in rowlist:
         fieldname = db[tablename].fields[1]
@@ -88,18 +124,19 @@ def itemlist():
             listformat = r[fieldname]
 
         vardict = {'tablename': tablename,
-                   'orderby': orderby}
-        if vardict:
-            vardict['restrictor'] = restrictor
+                   'orderby': orderby,
+                   'restrictor': restrictor
+                   }
+        vardict.update(request.vars)
 
-        i = A(listformat, callback=URL('plugin_listandedit', 'edit.load',
+        i = A(listformat, _href=URL('plugin_listandedit', 'edit.load',
                                     args=[tablename, r.id],
                                     vars=vardict),
               _class='plugin_listandedit_list',
               cid='viewpane')
         listset.append(i)
 
-    return dict(listset=listset)
+        return listset
 
 
 def widget():
@@ -128,82 +165,22 @@ def widget():
     # I think I would have to append file in the parent view.
     # response.files.append(URL('static',
     # 'plugin_listandedit/plugin_listandedit.js'))
-    tablename = request.args[0]
-    rowlist = []
-    orderby = 'id'
-    try:
-        if 'orderby' in request.vars:
-            orderby = request.vars['orderby'].split('|')
-    except ValueError:
-        pass
 
-    # pass that name on to be used as a title for the widget
-    rname = '{} ({})'.format(tablename, '|'.join(islist(orderby)))
+    tablename, orderby, restrictor = _get_params(request.args, request.vars)
+    widget_title = '{} ({})'.format(tablename, '|'.join(islist(orderby)))
+    rowlist = _get_rowlist(tablename, orderby, restrictor)
+    html_list = _get_listitems(rowlist, tablename, orderby, restrictor)
 
-    # get filtering values if any
-    if 'restrictor' in request.vars:
-        restr = request.vars['restrictor']
-        # convert the string from the URL to a python dictionary object
-        restrictor = ast.literal_eval(restr)
-    else:
-        restrictor = None
-
-    # check to make sure the required argument names a table in the db
-    if tablename not in db.tables():
-        response.flash = '''Sorry, you are trying to list
-        entries from a table that does not exist in the database.'''
-    else:
-        tb = db[tablename]
-        if restrictor:
-            for k, v in restrictor.items():
-                filter_select = db(tb[k] == v)._select(tb.id)
-                rowlist = db(tb.id.belongs(filter_select)).select()
-        else:
-            if isinstance(orderby, list):
-                orderby = orderby[0]
-            else:
-                orderby = orderby
-            rowlist = db().select(tb.ALL, orderby=~tb[orderby])
-
-    # build html list from the selected rows
-    listset = []
-    for r in rowlist:
-        fieldname = db[tablename].fields[1]
-        # use format string from db table definition to list entries (if
-        # available)
-        if db[tablename]._format:
-            try:
-                listformat = db[tablename]._format % r
-            except:
-                listformat = db[tablename]._format(r)
-        else:
-            listformat = r[fieldname]
-
-        vardict = {'tablename': tablename,
-                   'orderby': orderby}
-        vardict.update(request.vars)
-        if restrictor:
-            vardict['restrictor'] = restrictor
-
-        i = A(listformat, _href=URL('plugin_listandedit', 'edit.load',
-                                    args=[tablename, r.id],
-                                    vars=vardict),
-              _class='plugin_listandedit_list',
-              cid='viewpane')
-        listset.append(i)
-
-    # create a link for adding a new row to the table
     adder = A(u'\u200b', _href=URL('plugin_listandedit', 'edit.load',
                                    args=[tablename],
                                    vars=request.vars),
             _class='plugin_listandedit_addnew icon-plus badge badge-success',
             cid='viewpane')
-    'widget: orderby is', orderby
 
-    return dict(listset=listset, adder=adder, rname=rname)
+    return dict(listset=html_list, adder=adder, rname=widget_title)
 
 
-def makeurl(tablename, orderby, restrictor):
+def _makeurl(tablename, orderby, restrictor):
     rdict = {'orderby': orderby}
     if restrictor is not None:
         rdict['restrictor'] = restrictor
@@ -241,7 +218,7 @@ def dupAndEdit():
     if form.process(formname=formname).accepted:
         db.commit()
         print 'accepted form ================================='
-        the_url = makeurl(tablename, orderby, restrictor)
+        the_url = _makeurl(tablename, orderby, restrictor)
         response.js = "web2py_component('%s', " \
                       "'listpane');" % the_url
         response.flash = 'New record successfully created.'
@@ -320,7 +297,7 @@ def edit():
             if 'redirect' in request.vars and 'True' == request.vars['redirect']:
                 redirect(URL(request.vars['redirect_c'], request.vars['redirect_a']))
             else:
-                the_url = makeurl(tablename, orderby, restrictor)
+                the_url = _makeurl(tablename, orderby, restrictor)
                 # print {'the_url': the_url}
                 response.js = "window.setTimeout(" \
                               "web2py_component('{}', " \

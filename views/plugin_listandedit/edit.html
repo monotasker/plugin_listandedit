@@ -22,6 +22,7 @@ for v in range(vals):
 pass}}
 
 <script>
+        //TODO: why is this script here when it governs multiple select widgets?
         $('ul.sortable').sortable({
             placeholder: 'ui-state-highlight',
             stop: function(event, ui){ 
@@ -31,7 +32,7 @@ pass}}
         });
         $('ul.sortable').disableSelection();
 
-
+        //FIXME: below is hack to remove masthead
 var rm_masthead = function() {
     var x = $('div#masthead').remove();
 };
