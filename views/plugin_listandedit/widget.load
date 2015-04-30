@@ -3,8 +3,11 @@
     <div class="container-fluid">
     <div class="list_control col-xs-12">
         <h2>
-            <span class='table'>{{=request.args[0].capitalize()}}</span>
-            <span class='restrictor'>restricted by {{=rname}}</span>
+            <span class='table'>{{=tablename.capitalize()}}</span>
+            <span class='restrictor'>ordered by {{=', '.join(orderby)}}</span>
+            {{if restrictor:}}
+            <span class='restrictor'>(restricted by {{=restrictor}})</span>
+            {{pass}}
         </h2>
         {{=SPAN(str(len(listset)) + ' in total', _class='list_count')}}{{=adder}}
     </div>

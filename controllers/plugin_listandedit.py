@@ -11,7 +11,7 @@ import ast
 # import traceback
 from gluon import redirect
 from pprint import pprint
-from plugin_utils import islist
+# from plugin_utils import islist
 
 response.files.append(URL('static', 'css/plugin_listandedit.css'))
 
@@ -60,15 +60,19 @@ def _get_rowlist(tablename, orderby, restrictor):
     else:
         tb = db[tablename]
         if restrictor:
+            print 'filtering on restrictor'
             for k, v in restrictor.items():
                 filter_select = db(tb[k] == v)._select(tb.id)
-                rowlist = db(tb.id.belongs(filter_select)).select()
+                rowlist = db(tb.id.belongs(filter_select)
+                             ).select(orderby=~tb[orderby])
         else:
+            print 'no restrictor'
             if isinstance(orderby, list):
                 orderby = orderby[0]
             else:
                 orderby = orderby
             rowlist = db().select(tb.ALL, orderby=~tb[orderby])
+    print 'found', len(rowlist), 'db rows'
 
     return rowlist
 
@@ -98,6 +102,10 @@ def _get_params(rargs, rvars):
         restrictor = ast.literal_eval(restr)
     else:
         restrictor = None
+
+    print 'tablename:', tablename
+    print 'orderby:', orderby
+    print 'restrictor:', restrictor
 
     return tablename, orderby, restrictor
 
@@ -136,7 +144,7 @@ def _get_listitems(rowlist, tablename, orderby, restrictor):
               cid='viewpane')
         listset.append(i)
 
-        return listset
+    return listset
 
 
 def widget():
@@ -167,7 +175,6 @@ def widget():
     # 'plugin_listandedit/plugin_listandedit.js'))
 
     tablename, orderby, restrictor = _get_params(request.args, request.vars)
-    widget_title = '{} ({})'.format(tablename, '|'.join(islist(orderby)))
     rowlist = _get_rowlist(tablename, orderby, restrictor)
     html_list = _get_listitems(rowlist, tablename, orderby, restrictor)
 
@@ -177,7 +184,8 @@ def widget():
             _class='plugin_listandedit_addnew icon-plus badge badge-success',
             cid='viewpane')
 
-    return dict(listset=html_list, adder=adder, rname=widget_title)
+    return dict(listset=html_list, adder=adder,
+                tablename=tablename, restrictor=restrictor, orderby=orderby)
 
 
 def _makeurl(tablename, orderby, restrictor):
