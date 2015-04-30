@@ -4,11 +4,14 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+_get_listitems	plugin_listandedit.py	/^def _get_listitems(rowlist, tablename, orderby, restrictor):$/;"	f
+_get_params	plugin_listandedit.py	/^def _get_params(rargs, rvars):$/;"	f
+_get_rowlist	plugin_listandedit.py	/^def _get_rowlist(tablename, orderby, restrictor):$/;"	f
+_makeurl	plugin_listandedit.py	/^def _makeurl(tablename, orderby, restrictor):$/;"	f
 db	plugin_listandedit.py	/^    db = current.db$/;"	v
 dupAndEdit	plugin_listandedit.py	/^def dupAndEdit():$/;"	f
 edit	plugin_listandedit.py	/^def edit():$/;"	f
-list	plugin_listandedit.py	/^def list():$/;"	f
-makeurl	plugin_listandedit.py	/^def makeurl(tablename, orderby, restrictor):$/;"	f
+itemlist	plugin_listandedit.py	/^def itemlist():$/;"	f
 request	plugin_listandedit.py	/^    request = current.request$/;"	v
 response	plugin_listandedit.py	/^    response = current.response$/;"	v
 session	plugin_listandedit.py	/^    session = current.session$/;"	v

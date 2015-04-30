@@ -7,11 +7,14 @@ if 0:
     request = current.request
     db = current.db
     session = current.session
+from gluon.storage import Storage
 import ast
 # import traceback
 from gluon import redirect
 from pprint import pprint
 # from plugin_utils import islist
+from operator import itemgetter
+from icu import Locale, Collator
 
 response.files.append(URL('static', 'css/plugin_listandedit.css'))
 
@@ -39,21 +42,22 @@ def itemlist():
     fields when generating the list.
     """
 
-    tablename, orderby, restrictor = _get_params(request.args, request.vars)
+    tablename, orderby, restrictor, collation = _get_params(request.args, request.vars)
 
-    rowlist = _get_rowlist(tablename, orderby, restrictor)
-    listset = _get_listitems(rowlist, tablename, orderby, restrictor)
+    rowlist = _get_rowlist(tablename, orderby, restrictor, collation)
+    listset = _get_listitems(rowlist, tablename, orderby, restrictor, collation)
 
     return {'listset': listset}
 
 
-def _get_rowlist(tablename, orderby, restrictor):
+def _get_rowlist(tablename, orderby, restrictor, collation):
     """
     Return a web2py rows object with the db rows for filtered list items.
 
     """
     rowlist = []
-    # check to make sure the required argument names a table in the db
+    orderby = orderby[0] if isinstance(orderby, list) else orderby
+
     if tablename not in db.tables():
         response.flash = '''Sorry, you are trying to list
         entries from a table that does not exist in the database.'''
@@ -67,12 +71,13 @@ def _get_rowlist(tablename, orderby, restrictor):
                              ).select(orderby=~tb[orderby])
         else:
             print 'no restrictor'
-            if isinstance(orderby, list):
-                orderby = orderby[0]
-            else:
-                orderby = orderby
-            rowlist = db().select(tb.ALL, orderby=~tb[orderby])
-    print 'found', len(rowlist), 'db rows'
+            myrows = db().select(tb.ALL, orderby=~tb[orderby])
+    rowlist = myrows.as_list()
+
+    if collation:
+        myloc = Locale('el')
+        coll = Collator.createInstance(myloc)
+        rowlist = sorted(rowlist, key=itemgetter(orderby), cmp=coll.compare)
 
     return rowlist
 
@@ -103,14 +108,20 @@ def _get_params(rargs, rvars):
     else:
         restrictor = None
 
+    # get collation locale if any
+    if 'collation' in request.vars:
+        collation = rvars['collation']
+    else:
+        collation = None
+
     print 'tablename:', tablename
     print 'orderby:', orderby
     print 'restrictor:', restrictor
 
-    return tablename, orderby, restrictor
+    return tablename, orderby, restrictor, collation
 
 
-def _get_listitems(rowlist, tablename, orderby, restrictor):
+def _get_listitems(rowlist, tablename, orderby, restrictor, collation):
     """
     Build actual html list of links for listpane.
 
@@ -122,6 +133,7 @@ def _get_listitems(rowlist, tablename, orderby, restrictor):
     """
     listset = []
     for r in rowlist:
+        r = Storage(r)
         fieldname = db[tablename].fields[1]
         # use format string from db table definition to list entries (if
         # available)
@@ -133,7 +145,8 @@ def _get_listitems(rowlist, tablename, orderby, restrictor):
 
         vardict = {'tablename': tablename,
                    'orderby': orderby,
-                   'restrictor': restrictor
+                   'restrictor': restrictor,
+                   'collation': collation
                    }
         vardict.update(request.vars)
 
@@ -174,9 +187,9 @@ def widget():
     # response.files.append(URL('static',
     # 'plugin_listandedit/plugin_listandedit.js'))
 
-    tablename, orderby, restrictor = _get_params(request.args, request.vars)
-    rowlist = _get_rowlist(tablename, orderby, restrictor)
-    html_list = _get_listitems(rowlist, tablename, orderby, restrictor)
+    tablename, orderby, restrictor, collation = _get_params(request.args, request.vars)
+    rowlist = _get_rowlist(tablename, orderby, restrictor, collation)
+    html_list = _get_listitems(rowlist, tablename, orderby, restrictor, collation)
 
     adder = A(u'\u200b', _href=URL('plugin_listandedit', 'edit.load',
                                    args=[tablename],
