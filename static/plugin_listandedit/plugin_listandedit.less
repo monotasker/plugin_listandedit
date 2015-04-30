@@ -16,7 +16,7 @@
                                      overflow:auto;
                                      position:relative;
                                      padding-right: 0;
-    .list-group-item                {padding: 0;
+    .list-group-item                {padding: 0.25em 0 0.25em 0.5em;
     }
 }
 
@@ -35,6 +35,7 @@
                                     margin-right:0;
     }
 }
+
 #viewpane                          {overflow:auto;
                                     height: 600px;
                                     position:relative;
@@ -48,6 +49,9 @@
                                     right: (@baseLineHeight/2);
                                     top:0;
     }
+    li#submit_record__row           {position:fixed;
+                                     bottom:100px;
+                                     right:0px;}
 }
 
 /**base theme - depends on mixins and vars from plugin_framework**/
@@ -83,6 +87,11 @@
         &:hover                    {background-color:darken(@col3, 10%);
                                     transition: 200ms all linear}
     }
+    li#submit_record__row           {position:fixed;
+                                     bottom:60px;
+                                     right:0px;
+                                     background-color:@col3;
+                                     padding:0.5em 1em;}
 }
 
 #page .list_control                {padding:0;

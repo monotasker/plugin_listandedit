@@ -7,7 +7,7 @@
   padding-right: 0;
 }
 #listpane .list-group-item {
-  padding: 0;
+  padding: 0.25em 0 0.25em 0.5em;
 }
 #page .list_control {
   padding: 0;
@@ -44,6 +44,11 @@
   right: 10.5px;
   top: 0;
 }
+#viewpane li#submit_record__row {
+  position: fixed;
+  bottom: 100px;
+  right: 0px;
+}
 /**base theme - depends on mixins and vars from plugin_framework**/
 /*#listpane                          {*/
 /*ul                             {padding-left:0;*/
@@ -76,6 +81,13 @@
 #viewpane .plugin_listandedit_duplicate:hover {
   background-color: #0000cc;
   transition: 200ms all linear;
+}
+#viewpane li#submit_record__row {
+  position: fixed;
+  bottom: 60px;
+  right: 0px;
+  background-color: #0000ff;
+  padding: 0.5em 1em;
 }
 #page .list_control {
   padding: 0;
