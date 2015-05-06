@@ -201,12 +201,10 @@ def widget():
                 tablename=tablename, restrictor=restrictor, orderby=orderby)
 
 
-def _makeurl(tablename, orderby, restrictor):
-    rdict = {'orderby': orderby}
-    if restrictor is not None:
-        rdict['restrictor'] = restrictor
+def _makeurl(tablename, urlvars):
+    rdict = urlvars
     the_url = URL('plugin_listandedit', 'itemlist.load',
-                  args=[tablename], vars=rdict)
+                  args=[tablename], vars=urlvars)
     return the_url
 
 
@@ -269,8 +267,10 @@ def edit():
     if request.args is not None:
         tablename = request.args[0]
         orderby = request.vars['orderby'] if 'orderby' \
-                  in request.vars.keys() else 'id'
+                     in request.vars.keys() else 'id'
         restrictor = request.vars['restrictor'] if 'restrictor' \
+                     in request.vars.keys() else None
+        collation = request.vars['collation'] if 'collation' \
                      in request.vars.keys() else None
 
         if len(request.args) > 1:  # editing specific item
@@ -318,7 +318,7 @@ def edit():
             if 'redirect' in request.vars and 'True' == request.vars['redirect']:
                 redirect(URL(request.vars['redirect_c'], request.vars['redirect_a']))
             else:
-                the_url = _makeurl(tablename, orderby, restrictor)
+                the_url = _makeurl(tablename, request.vars)
                 # print {'the_url': the_url}
                 response.js = "window.setTimeout(" \
                               "web2py_component('{}', " \
