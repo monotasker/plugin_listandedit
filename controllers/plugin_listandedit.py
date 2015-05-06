@@ -201,13 +201,6 @@ def widget():
                 tablename=tablename, restrictor=restrictor, orderby=orderby)
 
 
-def _makeurl(tablename, urlvars):
-    rdict = urlvars
-    the_url = URL('plugin_listandedit', 'itemlist.load',
-                  args=[tablename], vars=urlvars)
-    return the_url
-
-
 def dupAndEdit():
     """Create and process a form to insert a new record, pre-populated
     with field values copied from an existing record."""
@@ -215,6 +208,7 @@ def dupAndEdit():
     rowid = request.args[1]
     orderby = request.vars['orderby'] or 'id'
     restrictor = request.vars['restrictor'] or None
+    collation = request.vars['collation'] or None
     formname = '%s/%s/dup' % (tablename, rowid)
 
     src = db(db[tablename].id == rowid).select().first()
@@ -237,7 +231,10 @@ def dupAndEdit():
     if form.process(formname=formname).accepted:
         db.commit()
         print 'accepted form ================================='
-        the_url = _makeurl(tablename, orderby, restrictor)
+        the_url = URL('plugin_listandedit', 'itemlist.load',
+                      args=[tablename], vars={'orderby': orderby,
+                                              'restrictor': restrictor,
+                                              'collation': collation})
         response.js = "web2py_component('%s', " \
                       "'listpane');" % the_url
         response.flash = 'New record successfully created.'
@@ -266,12 +263,9 @@ def edit():
     default_vars = {}
     if request.args is not None:
         tablename = request.args[0]
-        orderby = request.vars['orderby'] if 'orderby' \
-                     in request.vars.keys() else 'id'
-        restrictor = request.vars['restrictor'] if 'restrictor' \
-                     in request.vars.keys() else None
-        collation = request.vars['collation'] if 'collation' \
-                     in request.vars.keys() else None
+        orderby = request.vars['orderby'] or 'id'
+        restrictor = request.vars['restrictor'] or None
+        collation = request.vars['collation'] or None
 
         if len(request.args) > 1:  # editing specific item
             rowid = request.args[1]
@@ -318,8 +312,10 @@ def edit():
             if 'redirect' in request.vars and 'True' == request.vars['redirect']:
                 redirect(URL(request.vars['redirect_c'], request.vars['redirect_a']))
             else:
-                the_url = _makeurl(tablename, request.vars)
-                # print {'the_url': the_url}
+                the_url = URL('plugin_listandedit', 'itemlist.load',
+                              args=[tablename], vars={'orderby': orderby,
+                                                      'restrictor': restrictor,
+                                                      'collation': collation})
                 response.js = "window.setTimeout(" \
                               "web2py_component('{}', " \
                               "'listpane'), 500);".format(the_url)
