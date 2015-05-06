@@ -75,7 +75,7 @@ def _get_rowlist(tablename, orderby, restrictor, collation):
     rowlist = myrows.as_list()
 
     if collation:
-        myloc = Locale('el')
+        myloc = Locale(collation)
         coll = Collator.createInstance(myloc)
         rowlist = sorted(rowlist, key=itemgetter(orderby), cmp=coll.compare)
 
