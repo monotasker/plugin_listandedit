@@ -42,7 +42,8 @@ def itemlist():
     fields when generating the list.
     """
 
-    tablename, orderby, restrictor, collation = _get_params(request.args, request.vars)
+    tablename, orderby, restrictor, collation = _get_params(request.args,
+                                                            request.vars)
 
     rowlist = _get_rowlist(tablename, orderby, restrictor, collation)
     listset = _get_listitems(rowlist, tablename, orderby, restrictor, collation)
@@ -109,14 +110,15 @@ def _get_params(rargs, rvars):
         restrictor = None
 
     # get collation locale if any
-    if 'collation' in request.vars:
+    if 'collation' in request.vars and request.vars['collation'] != 'None':
         collation = rvars['collation']
     else:
         collation = None
 
-    print 'tablename:', tablename
-    print 'orderby:', orderby
-    print 'restrictor:', restrictor
+    #print 'tablename:', tablename, type(tablename)
+    #print 'orderby:', orderby, type(orderby)
+    #print 'restrictor:', restrictor, type(restrictor)
+    #print 'collation:', collation, type(collation)
 
     return tablename, orderby, restrictor, collation
 
