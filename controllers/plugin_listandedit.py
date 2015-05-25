@@ -65,13 +65,13 @@ def _get_rowlist(tablename, orderby, restrictor, collation):
     else:
         tb = db[tablename]
         if restrictor:
-            print 'filtering on restrictor'
+            # print 'filtering on restrictor'
             for k, v in restrictor.items():
                 filter_select = db(tb[k] == v)._select(tb.id)
                 myrows = db(tb.id.belongs(filter_select)
                             ).select(orderby=~tb[orderby])
         else:
-            print 'no restrictor'
+            # print 'no restrictor'
             myrows = db().select(tb.ALL, orderby=~tb[orderby])
     rowlist = myrows.as_list()
 
@@ -227,8 +227,8 @@ def dupAndEdit():
                 form.vars[e] = request.vars[e] if e in request.vars.keys() \
                     else ''
     del form.vars['id']
-    print 'form vars ========================================='
-    pprint(form.vars)
+    # print 'form vars ========================================='
+    # pprint(form.vars)
 
     if form.process(formname=formname).accepted:
         db.commit()
