@@ -10,9 +10,7 @@ if 0:
 from gluon.storage import Storage
 import ast
 # import traceback
-from gluon import redirect
-from pprint import pprint
-# from plugin_utils import islist
+from plugin_listandedit import ListAndEdit
 from operator import itemgetter
 from icu import Locale, Collator
 
@@ -261,83 +259,9 @@ def edit():
             function of this controller, opening a form to insert a new record
             and pre-populating it with data copied from the current record.
     """
-    duplink = ''
-    default_vars = {}
-    if request.args is not None:
-        tablename = request.args[0]
-        orderby = request.vars['orderby'] or 'id'
-        restrictor = request.vars['restrictor'] or None
-        collation = request.vars['collation'] or None
+    form, duplink, flash, rjs = ListAndEdit().editform(rargs=request.args,
+                                                       rvars=request.vars)
+    response.flash = flash
+    response.js = rjs
 
-        if len(request.args) > 1:  # editing specific item
-            rowid = request.args[1]
-            formname = '%s/%s' % (tablename, rowid)
-            rargs = [db[tablename], rowid]
-
-            # create a link for adding a new row to the table
-            duplink = A('Make a copy of this record',
-                        _href=URL('plugin_listandedit',
-                                'dupAndEdit.load',
-                                args=[tablename, rowid],
-                                vars=request.vars),
-                        _class='plugin_listandedit_duplicate', cid='viewpane')
-
-        elif len(request.args) == 1:  # creating new item
-            formname = '%s/create' % (tablename)
-            default_vars = {k: v for k, v in request.vars.iteritems()
-                            if hasattr(db[tablename], k)}
-            rargs = [db[tablename]]
-
-        form = SQLFORM(*rargs, separator='',
-                deletable=True,
-                showid=True,
-                formstyle='ul')
-        # print {'default_vars': default_vars}
-        # for k in default_vars: form.vars.setitem(k, default_vars[k])
-        for k in default_vars: form.vars[k] = default_vars[k]
-
-        # FIXME: ajaxselect field values have to be added manually
-        # FIXME: this check will fail if ajaxselect widget is for field indx[1]
-        if db[tablename].fields[1] in request.vars.keys():
-            extras = [f for f in db[tablename].fields
-                      if f not in form.vars.keys()]
-            for e in extras:
-                form.vars[e] = request.vars[e] if e in request.vars.keys() \
-                    else ''
-            if 'id' in form.vars.keys() and form.vars['id'] in (None, ''):
-                del(form.vars['id'])
-        else:
-            pass
-
-        if form.process(formname=formname).accepted:
-            response.flash = 'The changes were recorded successfully.'
-            if 'redirect' in request.vars and 'True' == request.vars['redirect']:
-                redirect(URL(request.vars['redirect_c'], request.vars['redirect_a']))
-            else:
-                the_url = URL('plugin_listandedit', 'itemlist.load',
-                              args=[tablename], vars={'orderby': orderby,
-                                                      'restrictor': restrictor,
-                                                      'collation': collation})
-                response.js = "window.setTimeout(" \
-                              "web2py_component('{}', " \
-                              "'listpane'), 500);".format(the_url)
-        elif form.errors:
-            print '\n\nlistandedit form errors:'
-            pprint({k: v for k, v in form.errors.iteritems()})
-            print '\n\nlistandedit form vars'
-            pprint({k: v for k, v in form.vars.iteritems()})
-            print '\n\nlistandedit request vars'
-            pprint({k: v for k, v in request.vars.iteritems()})
-            response.flash = 'Sorry, there was an error processing ' \
-                             'the form. The changes have not been recorded.'
-
-        else:
-            print '\n\nno errors but form not processed:', form.vars
-            pass
-
-    else:
-        response.flash = 'Sorry, you need to specify a type of record before' \
-                         'I can list the records.'
-        form = None
-
-    return {form: form, duplink: duplink}
+    return {'form': form, 'duplink': duplink}
