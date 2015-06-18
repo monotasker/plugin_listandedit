@@ -7,12 +7,7 @@ if 0:
     request = current.request
     db = current.db
     session = current.session
-from gluon.storage import Storage
-import ast
-# import traceback
 from plugin_listandedit import ListAndEdit
-from operator import itemgetter
-from icu import Locale, Collator
 
 response.files.append(URL('static', 'css/plugin_listandedit.css'))
 
@@ -39,125 +34,12 @@ def itemlist():
     of fields in the table and the values are the values to be allowed in those
     fields when generating the list.
     """
-
-    tablename, orderby, restrictor, collation = _get_params(request.args,
-                                                            request.vars)
-
-    rowlist = _get_rowlist(tablename, orderby, restrictor, collation)
-    listset = _get_listitems(rowlist, tablename, orderby, restrictor, collation)
-
+    lae = ListAndEdit()
+    listset, flash, tname, orderby, restrictor = lae.itemlist(rargs=request.args,
+                                                              rvars=request.vars)
+    if flash:
+        response.flash = flash
     return {'listset': listset}
-
-
-def _get_rowlist(tablename, orderby, restrictor, collation):
-    """
-    Return a web2py rows object with the db rows for filtered list items.
-
-    """
-    rowlist = []
-    orderby = orderby[0] if isinstance(orderby, list) else orderby
-
-    if tablename not in db.tables():
-        response.flash = '''Sorry, you are trying to list
-        entries from a table that does not exist in the database.'''
-    else:
-        tb = db[tablename]
-        if restrictor:
-            # print 'filtering on restrictor'
-            for k, v in restrictor.items():
-                filter_select = db(tb[k] == v)._select(tb.id)
-                myrows = db(tb.id.belongs(filter_select)
-                            ).select(orderby=~tb[orderby])
-        else:
-            # print 'no restrictor'
-            myrows = db().select(tb.ALL, orderby=~tb[orderby])
-    rowlist = myrows.as_list()
-
-    if collation:
-        myloc = Locale(collation)
-        coll = Collator.createInstance(myloc)
-        rowlist = sorted(rowlist, key=itemgetter(orderby), cmp=coll.compare)
-
-    return rowlist
-
-
-def _get_params(rargs, rvars):
-    """
-    Return the tablename, orderby and restrictor parameters for the list items.
-
-    rargs: A list of strings giving url arguments
-    rvars: A dictionary of url named parameters
-    """
-    # get table to be listed
-    tablename = rargs[0]
-
-    # allow ordering of list based on values in any field
-    orderby = 'id'
-    try:
-        if 'orderby' in request.vars:
-            orderby = rvars['orderby'].split('|')
-    except ValueError:
-        pass
-
-    # get filtering values if any
-    if 'restrictor' in request.vars:
-        restr = rvars['restrictor']
-        # convert the string from the URL to a python dictionary object
-        restrictor = ast.literal_eval(restr)
-    else:
-        restrictor = None
-
-    # get collation locale if any
-    if 'collation' in request.vars and request.vars['collation'] != 'None':
-        collation = rvars['collation']
-    else:
-        collation = None
-
-    #print 'tablename:', tablename, type(tablename)
-    #print 'orderby:', orderby, type(orderby)
-    #print 'restrictor:', restrictor, type(restrictor)
-    #print 'collation:', collation, type(collation)
-
-    return tablename, orderby, restrictor, collation
-
-
-def _get_listitems(rowlist, tablename, orderby, restrictor, collation):
-    """
-    Build actual html list of links for listpane.
-
-    rowlist: web2py rows object containing db row data for list items
-    tablename: string giving name of the db table to which the items belong
-    orderby: string giving name of the field on which to order items
-    restrictor: dict of fieldnames and allowed values to use for filtering items
-
-    """
-    listset = []
-    for r in rowlist:
-        r = Storage(r)
-        fieldname = db[tablename].fields[1]
-        # use format string from db table definition to list entries (if
-        # available)
-        fmt = db[tablename]._format
-        if fmt:
-            listformat = fmt(r) if callable(fmt) else fmt % r
-        else:
-            listformat = r[fieldname]
-
-        vardict = {'tablename': tablename,
-                   'orderby': orderby,
-                   'restrictor': restrictor,
-                   'collation': collation
-                   }
-        vardict.update(request.vars)
-
-        i = A(listformat, _href=URL('plugin_listandedit', 'edit.load',
-                                    args=[tablename, r.id],
-                                    vars=vardict),
-              _class='plugin_listandedit_list',
-              cid='viewpane')
-        listset.append(i)
-
-    return listset
 
 
 def widget():
@@ -182,71 +64,34 @@ def widget():
     of fields in the table and the values are the values to be allowed in those
     fields when generating the list.
     """
-    # TODO: not clear whether appending file here works after page load
-    # I think I would have to append file in the parent view.
-    # response.files.append(URL('static',
-    # 'plugin_listandedit/plugin_listandedit.js'))
-
-    tablename, orderby, restrictor, collation = _get_params(request.args, request.vars)
-    rowlist = _get_rowlist(tablename, orderby, restrictor, collation)
-    html_list = _get_listitems(rowlist, tablename, orderby, restrictor, collation)
+    lae = ListAndEdit()
+    itemlist, flash, tname, orderby, restrictor = lae.itemlist(rargs=request.args,
+                                                               rvars=request.vars)
 
     adder = A(u'\u200b', _href=URL('plugin_listandedit', 'edit.load',
-                                   args=[tablename],
+                                   args=[tname],
                                    vars=request.vars),
             _class='plugin_listandedit_addnew icon-plus badge badge-success',
             cid='viewpane')
 
-    return dict(listset=html_list, adder=adder,
-                tablename=tablename, restrictor=restrictor, orderby=orderby)
+    return {'listset': itemlist,
+            'tablename': tname,
+            'restrictor': restrictor,
+            'orderby': orderby,
+            'adder': adder}
 
 
 def dupAndEdit():
     """Create and process a form to insert a new record, pre-populated
     with field values copied from an existing record."""
-    tablename = request.args[0]
-    rowid = request.args[1]
-    orderby = request.vars['orderby'] or 'id'
-    restrictor = request.vars['restrictor'] or None
-    collation = request.vars['collation'] or None
-    formname = '%s/%s/dup' % (tablename, rowid)
+    form, duplink, flash, rjs = ListAndEdit().dupform(rargs=request.args,
+                                                      rvars=request.vars)
+    if flash:
+        response.flash = flash
+    if rjs:
+        response.js = rjs
 
-    src = db(db[tablename].id == rowid).select().first()
-    form = SQLFORM(db[tablename], separator='', showid=True, formstyle='ul')
-
-    for v in db[tablename].fields:
-        # on opening populate duplicate values
-        form.vars[v] = src[v] if v != 'id' and v in src else None
-        # FIXME: ajaxselect field values have to be added manually
-        if db[tablename].fields[1] in request.vars.keys():  # on submit add ajaxselect values
-            extras = [f for f in db[tablename].fields
-                      if f not in form.vars.keys()]
-            for e in extras:
-                form.vars[e] = request.vars[e] if e in request.vars.keys() \
-                    else ''
-    del form.vars['id']
-    # print 'form vars ========================================='
-    # pprint(form.vars)
-
-    if form.process(formname=formname).accepted:
-        db.commit()
-        print 'accepted form ================================='
-        the_url = URL('plugin_listandedit', 'itemlist.load',
-                      args=[tablename], vars={'orderby': orderby,
-                                              'restrictor': restrictor,
-                                              'collation': collation})
-        response.js = "web2py_component('%s', " \
-                      "'listpane');" % the_url
-        response.flash = 'New record successfully created.'
-    elif form.errors:
-        print 'listandedit form errors:', [e for e in form.errors]
-        print 'listandedit form vars:', form.vars
-        response.flash = 'Sorry, there was an error processing '\
-                         'the form. The new record has not been created.'
-    else:
-        pass
-
-    return dict(form=form)
+    return {'form': form, 'duplink': duplink}
 
 
 def edit():
@@ -261,7 +106,9 @@ def edit():
     """
     form, duplink, flash, rjs = ListAndEdit().editform(rargs=request.args,
                                                        rvars=request.vars)
-    response.flash = flash
-    response.js = rjs
+    if flash:
+        response.flash = flash
+    if rjs:
+        response.js = rjs
 
     return {'form': form, 'duplink': duplink}
