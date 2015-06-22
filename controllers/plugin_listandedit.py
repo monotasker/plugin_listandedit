@@ -2,12 +2,13 @@
 # coding: utf8
 
 if 0:
-    from gluon import current, URL, SQLFORM, A
+    from gluon import current, URL, A, SPAN
     response = current.response
     request = current.request
     db = current.db
     session = current.session
 from plugin_listandedit import ListAndEdit
+from pprint import pprint
 
 response.files.append(URL('static', 'css/plugin_listandedit.css'))
 
@@ -68,11 +69,12 @@ def widget():
     itemlist, flash, tname, orderby, restrictor = lae.itemlist(rargs=request.args,
                                                                rvars=request.vars)
 
-    adder = A(u'\u200b', _href=URL('plugin_listandedit', 'edit.load',
-                                   args=[tname],
-                                   vars=request.vars),
-            _class='plugin_listandedit_addnew icon-plus badge badge-success',
-            cid='viewpane')
+    adder = A(SPAN(_class='glyphicon glyphicon-plus'),
+              _href=URL('plugin_listandedit', 'edit.load',
+                        args=[tname],
+                        vars=request.vars),
+              _class='plugin_listandedit_addnew badge badge-success',
+              cid='viewpane')
 
     return {'listset': itemlist,
             'tablename': tname,
@@ -104,8 +106,10 @@ def edit():
             function of this controller, opening a form to insert a new record
             and pre-populating it with data copied from the current record.
     """
+    print 'controller edit:: request.vars is --------------------------'
+    pprint(request.vars)
     form, duplink, flash, rjs = ListAndEdit().editform(rargs=request.args,
-                                                       rvars=request.vars)
+                                                        rvars=request.vars)
     if flash:
         response.flash = flash
     if rjs:

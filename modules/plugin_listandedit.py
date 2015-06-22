@@ -2,11 +2,14 @@
 # -*- coding: utf-8 -*-
 
 import ast
-from gluon import LOAD, current, A, URL, SQLFORM, redirect
+from gluon import LOAD, current, A, URL, SQLFORM, redirect, SPAN
 from gluon.storage import Storage
 from icu import Locale, Collator
+from importlib import import_module
 from operator import itemgetter
+import os
 from pprint import pprint
+import sys
 
 # CSS imported directly into framework.less
 # response.files.append(URL('static', 'plugin_listandedit/plugin_listandedit.css'))
@@ -145,8 +148,44 @@ class ListAndEdit(object):
                                       collation, rvars)
         return listset, flash, tablename, orderby, restrictor
 
-    def editform(self, rargs=None, rvars=None, copylabel=None,
-                 deletable=True, showid=True, dbio=True, formstyle='ul'):
+    def _myform(self, formargs, deletable=True, showid=True, formstyle='ul',
+                dbio=True):
+        """
+        Change in subclass to alter the form.
+        """
+        form = SQLFORM(*formargs,
+                       separator='',
+                       deletable=deletable,
+                       showid=showid,
+                       formstyle=formstyle)
+        return form
+
+    def _post_process(self, formvars, postprocess):
+        """
+        Execute dynamically imported code on form vars after main process() method.
+        """
+        returnval = None
+        postprocess = ast.literal_eval(postprocess)
+        if 'module' in postprocess.keys():
+
+            # allow imports from modules and site-packages
+            dirs = os.path.split(__file__)[0]
+            appname = dirs.split(os.path.sep)[-2]
+            modules_path = os.path.join('applications', appname, 'modules')
+            if modules_path not in sys.path:
+                sys.path.append(modules_path)  # imports from app modules folder
+
+            mod = import_module(postprocess['module'])
+            print 'imported module', mod
+            if 'func' in postprocess.keys():
+                myfunc = getattr(mod, postprocess['func'])
+                print 'myfunc:', myfunc
+                returnval = myfunc(**formvars)
+                print 'returnval', returnval
+
+        return returnval
+
+    def editform(self, rargs=None, rvars=None):
         """
         """
         db = current.db
@@ -155,12 +194,18 @@ class ListAndEdit(object):
         rjs = ''
         duplink = ''
         default_vars = {}
-        copylabel = copylabel if copylabel else 'Make a copy of this record'
+
         if rargs is not None:
             tablename = rargs[0]
+            showid = rvars['showid'] or True
+            dbio = False if 'dbio' in rvars.keys() and rvars['dbio'] == 'False' else True
+            formstyle = rvars['formstyle'] or 'ul'
+            deletable = rvars['deletable'] or True
+            copylabel = rvars['copylabel'] or SPAN(_class='glyphicon glyphicon-file')
             orderby = rvars['orderby'] or 'id'
             restrictor = rvars['restrictor'] or None
             collation = rvars['collation'] or None
+            postprocess = rvars['postprocess'] or None
 
             if len(rargs) > 1:  # editing specific item
                 rowid = rargs[1]
@@ -182,10 +227,10 @@ class ListAndEdit(object):
                                 if hasattr(db[tablename], k)}
                 formargs = [db[tablename]]
 
-            form = SQLFORM(*formargs, separator='',
-                           deletable=deletable,
-                           showid=showid,
-                           formstyle=formstyle)
+            form = self._myform(formargs,
+                                deletable=deletable,
+                                showid=showid,
+                                formstyle=formstyle)
             # print {'default_vars': default_vars}
             # for k in default_vars: form.vars.setitem(k, default_vars[k])
             for k in default_vars: form.vars[k] = default_vars[k]
@@ -205,8 +250,11 @@ class ListAndEdit(object):
             print 'form vars in editform ---------------------------------'
             pprint(form.vars)
 
-            if form.process(formname=formname).accepted:
-                flash = 'The changes were recorded successfully.'
+            if form.process(formname=formname, dbio=dbio).accepted:
+                if postprocess:
+                    flash = self._post_process(form.vars, postprocess)
+                if dbio:
+                    flash = 'The changes were recorded successfully.'
 
                 # either redirect or refresh the list pane
                 if 'redirect' in rvars and 'True' == rvars['redirect']:
@@ -252,6 +300,7 @@ class ListAndEdit(object):
         restrictor = rvars['restrictor'] or None
         collation = rvars['collation'] or None
         copylabel = copylabel if copylabel else 'Make a copy of this record'
+        dbio = False if 'dbio' in rvars.keys() and rvars['dbio'] == 'False' else True
 
         # create a link for adding a new row to the table
         duplink = A(copylabel,
@@ -284,7 +333,7 @@ class ListAndEdit(object):
         print 'form vars ========================================='
         pprint(form.vars)
 
-        if form.process(formname=formname).accepted:
+        if form.process(formname=formname, dbio=dbio).accepted:
             db.commit()
             #print 'accepted form ================================='
             the_url = URL('plugin_listandedit', 'itemlist.load',
@@ -292,7 +341,8 @@ class ListAndEdit(object):
                                                   'restrictor': restrictor,
                                                   'collation': collation})
             rjs = "web2py_component('{}', 'listpane');".format(the_url)
-            flash = 'New record successfully created.'
+            if dbio:
+                flash = 'New record successfully created.'
         elif form.errors:
             print 'listandedit form errors:', [e for e in form.errors]
             print 'listandedit form vars:', form.vars
