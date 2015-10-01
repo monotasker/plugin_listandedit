@@ -247,14 +247,15 @@ class ListAndEdit(object):
                     del(form.vars['id'])
             else:
                 pass
-            print 'form vars in editform ---------------------------------'
-            pprint(form.vars)
+            # print 'form vars in editform ---------------------------------'
+            # pprint(form.vars)
 
             if form.process(formname=formname, dbio=dbio).accepted:
+                flash = ''
                 if postprocess:
-                    flash = self._post_process(form.vars, postprocess)
+                    flash += '{} '.format(self._post_process(form.vars, postprocess))
                 if dbio:
-                    flash = 'The changes were recorded successfully.'
+                    flash += 'The changes were recorded successfully.'
 
                 # either redirect or refresh the list pane
                 if 'redirect' in rvars and 'True' == rvars['redirect']:
@@ -330,8 +331,8 @@ class ListAndEdit(object):
                 for e in extras:
                     form.vars[e] = rvars[e] if e in rvars.keys() else ''
         del form.vars['id']
-        print 'form vars ========================================='
-        pprint(form.vars)
+        # print 'form vars ========================================='
+        # pprint(form.vars)
 
         if form.process(formname=formname, dbio=dbio).accepted:
             db.commit()
