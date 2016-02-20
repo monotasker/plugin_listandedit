@@ -92,15 +92,15 @@ class ListAndEdit(object):
         else:
             collation = None
 
-        #print 'tablename:', tablename, type(tablename)
-        #print 'orderby:', orderby, type(orderby)
-        #print 'restrictor:', restrictor, type(restrictor)
-        #print 'collation:', collation, type(collation)
+        if 'postprocess' in rvars and rvars['postprocess'] != 'None':
+            collation = rvars['postprocess']
+        else:
+            collation = None
 
-        return tablename, orderby, restrictor, collation
+        return tablename, orderby, restrictor, collation, postprocess
 
     def _get_listitems(self, rowlist, tablename, orderby, restrictor,
-                       collation, rvars):
+                       collation, rvars, postprocess):
         """
         Build actual html list of links for listpane.
 
@@ -126,7 +126,8 @@ class ListAndEdit(object):
             vardict = {'tablename': tablename,
                        'orderby': orderby,
                        'restrictor': restrictor,
-                       'collation': collation
+                       'collation': collation,
+                       'postprocess': postprocess
                        }
             vardict.update(rvars)
 
@@ -141,11 +142,13 @@ class ListAndEdit(object):
     def itemlist(self, rargs=None, rvars=None):
         """
         """
-        tablename, orderby, restrictor, collation = self._get_params(rargs, rvars)
+        tablename, orderby, restrictor, collation, postprocess \
+            = self._get_params(rargs, rvars)
+        print 'postprocess is', postprocess
         rowlist, flash = self._get_rowlist(tablename, orderby, restrictor,
                                            collation)
         listset = self._get_listitems(rowlist, tablename, orderby, restrictor,
-                                      collation, rvars)
+                                      collation, rvars, postprocess)
         return listset, flash, tablename, orderby, restrictor
 
     def _myform(self, formargs, deletable=True, showid=True, formstyle='ul',
