@@ -93,9 +93,9 @@ class ListAndEdit(object):
             collation = None
 
         if 'postprocess' in rvars and rvars['postprocess'] != 'None':
-            collation = rvars['postprocess']
+            postprocess = rvars['postprocess']
         else:
-            collation = None
+            postprocess = None
 
         return tablename, orderby, restrictor, collation, postprocess
 
