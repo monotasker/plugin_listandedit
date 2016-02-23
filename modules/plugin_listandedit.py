@@ -169,7 +169,7 @@ class ListAndEdit(object):
         """
         returnval = None
         postprocess = ast.literal_eval(postprocess)
-        if 'module' in postprocess.keys():
+        if postprocess and 'module' in postprocess.keys():
 
             # allow imports from modules and site-packages
             dirs = os.path.split(__file__)[0]
@@ -255,7 +255,7 @@ class ListAndEdit(object):
 
             if form.process(formname=formname, dbio=dbio).accepted:
                 flash = ''
-                if postprocess:
+                if postprocess and postprocess not in ['none', 'None']:
                     flash += '{} '.format(self._post_process(form.vars, postprocess))
                 if dbio:
                     flash += 'The changes were recorded successfully.'
