@@ -106,8 +106,8 @@ def edit():
             function of this controller, opening a form to insert a new record
             and pre-populating it with data copied from the current record.
     """
-    print 'controller edit:: request.vars is --------------------------'
-    pprint(request.vars)
+    # print 'controller edit:: request.vars is --------------------------'
+    # pprint(request.vars)
     form, duplink, flash, rjs = ListAndEdit().editform(rargs=request.args,
                                                         rvars=request.vars)
     if flash:

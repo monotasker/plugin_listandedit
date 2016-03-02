@@ -176,12 +176,9 @@ class ListAndEdit(object):
                 sys.path.append(modules_path)  # imports from app modules folder
 
             mod = import_module(postprocess['module'])
-            print 'imported module', mod
             if 'func' in postprocess.keys():
                 myfunc = getattr(mod, postprocess['func'])
-                print 'myfunc:', myfunc
                 returnval = myfunc(**formvars)
-                print 'returnval', returnval
 
         return returnval
 
@@ -237,16 +234,16 @@ class ListAndEdit(object):
 
             # FIXME: ajaxselect field values have to be added manually
             # FIXME: this check will fail if ajaxselect widget is for field indx[1]
-            if db[tablename].fields[1] in rvars.keys():
-                extras = [f for f in db[tablename].fields
-                          if f not in form.vars.keys()]
-                for e in extras:
-                    form.vars[e] = rvars[e] if e in rvars.keys() \
-                        else ''
-                if 'id' in form.vars.keys() and form.vars['id'] in (None, ''):
-                    del(form.vars['id'])
-            else:
-                pass
+            # if db[tablename].fields[1] in rvars.keys():
+            #     extras = [f for f in db[tablename].fields
+            #               if f not in form.vars.keys()]
+            #     for e in extras:
+            #         form.vars[e] = rvars[e] if e in rvars.keys() \
+            #             else ''
+            #     if 'id' in form.vars.keys() and form.vars['id'] in (None, ''):
+            #         del(form.vars['id'])
+            # else:
+            #     pass
             # print 'form vars in editform ---------------------------------'
             # pprint(form.vars)
 
