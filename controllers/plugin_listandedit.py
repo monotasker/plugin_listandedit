@@ -1,14 +1,15 @@
 #! /usr/bin/python
 # coding: utf8
 
+from plugin_listandedit import ListAndEdit
+# from pprint import pprint
+
 if 0:
     from gluon import current, URL, A, SPAN
     response = current.response
     request = current.request
     db = current.db
     session = current.session
-from plugin_listandedit import ListAndEdit
-from pprint import pprint
 
 response.files.append(URL('static', 'css/plugin_listandedit.css'))
 
@@ -66,8 +67,8 @@ def widget():
     fields when generating the list.
     """
     lae = ListAndEdit()
-    itemlist, flash, tname, orderby, restrictor = lae.itemlist(rargs=request.args,
-                                                               rvars=request.vars)
+    itemlist, flash, tname, orderby, restrictor = \
+        lae.itemlist(rargs=request.args, rvars=request.vars)
 
     adder = A(SPAN(_class='glyphicon glyphicon-plus'),
               _href=URL('plugin_listandedit', 'edit.load',

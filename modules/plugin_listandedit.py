@@ -264,7 +264,8 @@ class ListAndEdit(object):
                     the_url = URL('plugin_listandedit', 'itemlist.load',
                                   args=[tablename], vars={'orderby': orderby,
                                                           'restrictor': restrictor,
-                                                          'collation': collation})
+                                                          'collation': collation,
+                                                          'postprocess': postprocess})
                     rjs = "window.setTimeout(web2py_component('{}', " \
                           "'listpane'), 500);".format(the_url)
             elif form.errors:
@@ -300,6 +301,7 @@ class ListAndEdit(object):
         orderby = rvars['orderby'] or 'id'
         restrictor = rvars['restrictor'] or None
         collation = rvars['collation'] or None
+        postprocess = rvars['postprocess'] or None
         copylabel = copylabel if copylabel else 'Make a copy of this record'
         dbio = False if 'dbio' in rvars.keys() and rvars['dbio'] == 'False' else True
 
@@ -340,7 +342,8 @@ class ListAndEdit(object):
             the_url = URL('plugin_listandedit', 'itemlist.load',
                           args=[tablename], vars={'orderby': orderby,
                                                   'restrictor': restrictor,
-                                                  'collation': collation})
+                                                  'collation': collation,
+                                                  'postprocess': postprocess})
             rjs = "web2py_component('{}', 'listpane');".format(the_url)
             if dbio:
                 flash = 'New record successfully created.'
