@@ -1,6 +1,9 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
+from memory_profiler import profile
+from guppy import hpy
+from memprof import *
 import ast
 from gluon import LOAD, current, A, URL, SQLFORM, redirect, SPAN
 from gluon.storage import Storage
@@ -21,7 +24,6 @@ def plugin_listandedit():
     plugin_listandedit widget.
     '''
     return LOAD('plugin_listandedit', 'widget.load', ajax=True)
-
 
 class ListAndEdit(object):
     """
@@ -156,11 +158,25 @@ class ListAndEdit(object):
         """
         Change in subclass to alter the form.
         """
+
+        # import objgraph
+        # objgraph.show_growth(limit=3)
         form = SQLFORM(*formargs,
                        separator='',
                        deletable=deletable,
                        showid=showid,
                        formstyle=formstyle)
+        # objgraph.show_growth()
+        # objgraph.show_most_common_types()
+
+        # import random
+        # objgraph.show_chain(
+        #     objgraph.find_backref_chain(
+        #         random.choice(objgraph.by_type('dict')),
+        #         objgraph.is_proper_module,
+        #         max_depth=5)
+        #         )
+
         return form
 
     def _post_process(self, formvars, postprocess):
@@ -176,7 +192,7 @@ class ListAndEdit(object):
             appname = dirs.split(os.path.sep)[-2]
             modules_path = os.path.join('applications', appname, 'modules')
             if modules_path not in sys.path:
-                sys.path.append(modules_path)  # imports from app modules folder
+                sys.path.append(modules_path)  # imports from modules folder
 
             mod = import_module(postprocess['module'])
             if 'func' in postprocess.keys():
@@ -185,6 +201,7 @@ class ListAndEdit(object):
 
         return returnval
 
+    # @memprof(plot = True)
     def editform(self, rargs=None, rvars=None):
         """
         """
@@ -195,18 +212,22 @@ class ListAndEdit(object):
         duplink = ''
         default_vars = {}
 
+        print '1'
         if rargs is not None:
             tablename = rargs[0]
             showid = rvars['showid'] or True
-            dbio = False if 'dbio' in rvars.keys() and rvars['dbio'] == 'False' else True
+            dbio = False if 'dbio' in rvars.keys() and \
+                rvars['dbio'] == 'False' else True
             formstyle = rvars['formstyle'] or 'ul'
             deletable = rvars['deletable'] or True
-            copylabel = rvars['copylabel'] or SPAN(_class='glyphicon glyphicon-file')
+            copylabel = rvars['copylabel'] or \
+                SPAN(_class='glyphicon glyphicon-file')
             orderby = rvars['orderby'] or 'id'
             restrictor = rvars['restrictor'] or None
             collation = rvars['collation'] or None
             postprocess = rvars['postprocess'] or None
 
+            print '2'
             if len(rargs) > 1:  # editing specific item
                 rowid = rargs[1]
                 formname = '{}/{}'.format(tablename, rowid)
@@ -220,17 +241,20 @@ class ListAndEdit(object):
                                       vars=rvars),
                             _class='plugin_listandedit_duplicate',
                             cid='viewpane')
-
+                print '3'
             elif len(rargs) == 1:  # creating new item
                 formname = '{}/create'.format(tablename)
                 default_vars = {k: v for k, v in rvars.iteritems()
                                 if hasattr(db[tablename], k)}
                 formargs = [db[tablename]]
 
+            pprint(formargs)
+            print '4'
             form = self._myform(formargs,
                                 deletable=deletable,
                                 showid=showid,
                                 formstyle=formstyle)
+            print '5'
             # print {'default_vars': default_vars}
             # for k in default_vars: form.vars.setitem(k, default_vars[k])
             for k in default_vars: form.vars[k] = default_vars[k]
@@ -249,7 +273,7 @@ class ListAndEdit(object):
             #     pass
             # print 'form vars in editform ---------------------------------'
             # pprint(form.vars)
-
+            print '6'
             if form.process(formname=formname, dbio=dbio).accepted:
                 flash = ''
                 if postprocess and postprocess not in ['none', 'None']:
@@ -285,6 +309,7 @@ class ListAndEdit(object):
             flash = 'Sorry, you need to specify a type of record before' \
                              'I can list the records.'
             form = None
+        print '7'
 
         return form, duplink, flash, rjs
 
