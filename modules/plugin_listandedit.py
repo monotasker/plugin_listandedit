@@ -1,9 +1,6 @@
 #! /usr/bin/python
 # -*- coding: utf-8 -*-
 
-from memory_profiler import profile
-from guppy import hpy
-from memprof import *
 import ast
 from gluon import LOAD, current, A, URL, SQLFORM, redirect, SPAN
 from gluon.storage import Storage
@@ -201,7 +198,6 @@ class ListAndEdit(object):
 
         return returnval
 
-    # @memprof(plot = True)
     def editform(self, rargs=None, rvars=None):
         """
         """
