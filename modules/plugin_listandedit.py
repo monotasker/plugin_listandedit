@@ -43,7 +43,7 @@ class ListAndEdit(object):
             tb = db[tablename]
             if restrictor:
                 # print 'filtering on restrictor'
-                for k, v in restrictor.items():
+                for k, v in list(restrictor.items()):
                     filter_select = db(tb[k] == v)._select(tb.id)
                     myrows = db(tb.id.belongs(filter_select)
                                 ).select(orderby=~tb[orderby])
@@ -143,7 +143,7 @@ class ListAndEdit(object):
         """
         tablename, orderby, restrictor, collation, postprocess \
             = self._get_params(rargs, rvars)
-        print 'postprocess is', postprocess
+        print('postprocess is', postprocess)
         rowlist, flash = self._get_rowlist(tablename, orderby, restrictor,
                                            collation)
         listset = self._get_listitems(rowlist, tablename, orderby, restrictor,
@@ -182,7 +182,7 @@ class ListAndEdit(object):
         """
         returnval = None
         postprocess = ast.literal_eval(postprocess)
-        if postprocess and 'module' in postprocess.keys():
+        if postprocess and 'module' in list(postprocess.keys()):
 
             # allow imports from modules and site-packages
             dirs = os.path.split(__file__)[0]
@@ -192,7 +192,7 @@ class ListAndEdit(object):
                 sys.path.append(modules_path)  # imports from modules folder
 
             mod = import_module(postprocess['module'])
-            if 'func' in postprocess.keys():
+            if 'func' in list(postprocess.keys()):
                 myfunc = getattr(mod, postprocess['func'])
                 returnval = myfunc(**formvars)
 
@@ -208,11 +208,11 @@ class ListAndEdit(object):
         duplink = ''
         default_vars = {}
 
-        print '1'
+        print('1')
         if rargs is not None:
             tablename = rargs[0]
             showid = rvars['showid'] or True
-            dbio = False if 'dbio' in rvars.keys() and \
+            dbio = False if 'dbio' in list(rvars.keys()) and \
                 rvars['dbio'] == 'False' else True
             formstyle = rvars['formstyle'] or 'ul'
             deletable = rvars['deletable'] or True
@@ -223,7 +223,7 @@ class ListAndEdit(object):
             collation = rvars['collation'] or None
             postprocess = rvars['postprocess'] or None
 
-            print '2'
+            print('2')
             if len(rargs) > 1:  # editing specific item
                 rowid = rargs[1]
                 formname = '{}/{}'.format(tablename, rowid)
@@ -237,20 +237,20 @@ class ListAndEdit(object):
                                       vars=rvars),
                             _class='plugin_listandedit_duplicate',
                             cid='viewpane')
-                print '3'
+                print('3')
             elif len(rargs) == 1:  # creating new item
                 formname = '{}/create'.format(tablename)
-                default_vars = {k: v for k, v in rvars.iteritems()
+                default_vars = {k: v for k, v in rvars.items()
                                 if hasattr(db[tablename], k)}
                 formargs = [db[tablename]]
 
             pprint(formargs)
-            print '4'
+            print('4')
             form = self._myform(formargs,
                                 deletable=deletable,
                                 showid=showid,
                                 formstyle=formstyle)
-            print '5'
+            print('5')
             # print {'default_vars': default_vars}
             # for k in default_vars: form.vars.setitem(k, default_vars[k])
             for k in default_vars: form.vars[k] = default_vars[k]
@@ -269,7 +269,7 @@ class ListAndEdit(object):
             #     pass
             # print 'form vars in editform ---------------------------------'
             # pprint(form.vars)
-            print '6'
+            print('6')
             if form.process(formname=formname, dbio=dbio).accepted:
                 flash = ''
                 if postprocess and postprocess not in ['none', 'None']:
@@ -289,12 +289,12 @@ class ListAndEdit(object):
                     rjs = "window.setTimeout(web2py_component('{}', " \
                           "'listpane'), 500);".format(the_url)
             elif form.errors:
-                print '\n\nlistandedit form errors:'
-                pprint({k: v for k, v in form.errors.iteritems()})
-                print '\n\nlistandedit form vars'
-                pprint({k: v for k, v in form.vars.iteritems()})
-                print '\n\nlistandedit request vars'
-                pprint({k: v for k, v in rvars.iteritems()})
+                print('\n\nlistandedit form errors:')
+                pprint({k: v for k, v in form.errors.items()})
+                print('\n\nlistandedit form vars')
+                pprint({k: v for k, v in form.vars.items()})
+                print('\n\nlistandedit request vars')
+                pprint({k: v for k, v in rvars.items()})
                 flash = 'Sorry, there was an error processing ' \
                                 'the form. The changes have not been recorded.'
 
@@ -305,7 +305,7 @@ class ListAndEdit(object):
             flash = 'Sorry, you need to specify a type of record before' \
                              'I can list the records.'
             form = None
-        print '7'
+        print('7')
 
         return form, duplink, flash, rjs
 
@@ -324,7 +324,7 @@ class ListAndEdit(object):
         collation = rvars['collation'] or None
         postprocess = rvars['postprocess'] or None
         copylabel = copylabel if copylabel else 'Make a copy of this record'
-        dbio = False if 'dbio' in rvars.keys() and rvars['dbio'] == 'False' else True
+        dbio = False if 'dbio' in list(rvars.keys()) and rvars['dbio'] == 'False' else True
 
         # create a link for adding a new row to the table
         duplink = A(copylabel,
@@ -348,11 +348,11 @@ class ListAndEdit(object):
             # on opening populate duplicate values
             form.vars[v] = src[v] if v != 'id' and v in src else None
             # FIXME: ajaxselect field values have to be added manually
-            if db[tablename].fields[1] in rvars.keys():  # on submit add ajaxselect values
+            if db[tablename].fields[1] in list(rvars.keys()):  # on submit add ajaxselect values
                 extras = [f for f in db[tablename].fields
-                        if f not in form.vars.keys()]
+                        if f not in list(form.vars.keys())]
                 for e in extras:
-                    form.vars[e] = rvars[e] if e in rvars.keys() else ''
+                    form.vars[e] = rvars[e] if e in list(rvars.keys()) else ''
         del form.vars['id']
         # print 'form vars ========================================='
         # pprint(form.vars)
@@ -369,8 +369,8 @@ class ListAndEdit(object):
             if dbio:
                 flash = 'New record successfully created.'
         elif form.errors:
-            print 'listandedit form errors:', [e for e in form.errors]
-            print 'listandedit form vars:', form.vars
+            print('listandedit form errors:', [e for e in form.errors])
+            print('listandedit form vars:', form.vars)
             flash = 'Sorry, there was an error processing '\
                             'the form. The new record has not been created.'
         else:
