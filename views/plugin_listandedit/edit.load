@@ -1,6 +1,6 @@
 {{vals = len(response._vars.values())
 for v in range(vals):
-    =response._vars.values()[v]
+    =list(response._vars.values())[v]
 pass}}
 
 <script>
